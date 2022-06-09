@@ -1,0 +1,924 @@
+<!doctype html>
+
+<!--
+## Features:
+
+- Keep CSS inline: It will be small enough not to add much weight to the page, which means it's better to avoid the extra HTTP call to request CSS
+- Use system fonts: But it's hard to find a nice system font for both Linux, Windows and MacOS
+
+- Google colours for links
+- Visual box around article to highlight it
+- Navigation - don't get in the way
+- 
+
+JavaScript:
+
+- Only use enhancements that aren't necessary:
+  - Document outline on the left
+  - Add "title" to links
+
+-->
+
+<html lang="en">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Installing Symfony 2 by creating a github fork</title>
+
+  <meta name="description" content="How to fork the Symfony 2 standard PHP project and install dependencies locally using Composer on Ubuntu">
+
+  <!-- Social media -->
+  <meta property='article:author' content='https://twitter.com/nottrobin' />
+  <meta property='article:publisher' content='https://robinwinslow.uk' />
+  <meta property="og:image" content="https://www.thebluediamondgallery.com/tablet/images/blog.jpg" />
+  <meta property="og:url" content="https://robinwinslow.uk/installing-symfony-2-by-creating-a-github-fork" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Installing Symfony 2 by creating a github fork" />
+  <!-- Keep Terry Pratchett alive in the network https://xclacksoverhead.org/home/about -->
+  <meta http-equiv="x-clacks-overhead" content="GNU Terry Pratchett" />
+
+  <link type="application/atom+xml" rel="alternative" href="/rss.xml" />
+
+  <style>
+    /**
+       * Font size
+       * 
+       * For usability, bigger text is almost always better. People continue to Especially as resolutions get higher
+       * 
+       */
+
+    body {
+      font-family: "dejavu Sans light", sans-serif;
+      font-size: 1.5rem;
+      background-color: #efefef;
+      margin: 0;
+    }
+
+    time,
+    .subtitle {
+      color: #767676;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-weight: normal;
+      margin-top: 2em;
+      margin-bottom: 1em;
+    }
+
+    h1 {
+      font-size: 2em;
+    }
+
+    h2 {
+      font-size: 1.5em;
+    }
+
+    h3 {
+      font-size: 1.2em;
+    }
+
+    h4 {
+      font-size: 1.1em;
+    }
+
+    p {
+      line-height: 1.5em;
+    }
+
+    a {
+      color: #1a0dab;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    a:visited {
+      color: #551A8B;
+    }
+
+    input,
+    button {
+      appearance: none;
+      border: 1px solid lightgray;
+      font-size: 1em;
+      max-width: 100%;
+      padding: 0.5em 0.8em;
+    }
+
+    article {
+      margin: auto;
+      padding: 3em 5em;
+      max-width: 35em;
+      background-color: white;
+    }
+
+    @media (max-width: 1080px) {
+      article {
+        padding: 0.5em 1.5em;
+      }
+    }
+
+    article p,
+    article ul,
+    article ol {
+      margin-block-start: 1.5em;
+      margin-block-end: 1.5em;
+    }
+
+    article li {
+      margin-block-start: 1em;
+      margin-block-end: 1em;
+      line-height: 1.5em;
+    }
+
+    blockquote {
+      padding: 1em 1.5em;
+      margin: 1.5em 0;
+      border-left: 2px solid #ddd;
+      font-style: italic;
+    }
+
+    blockquote p {
+      display: inline;
+    }
+
+    pre {
+      overflow-x: auto;
+      background-color: #eee;
+      padding: 1em;
+      line-height: 125%;
+    }
+
+    img {
+      max-width: 100%;
+    }
+
+    code {
+      padding: 0.125em 0.25em;
+      line-height: 1.6em;
+      margin: 0;
+      font-size: 0.8em;
+      background-color: #f0f0f0;
+      border-radius: 6px;
+    }
+
+    pre code {
+      line-height: inherit;
+      padding: 0;
+    }
+
+    hr {
+      margin: 3em 0;
+    }
+
+    /* Classes */
+    .article-header {
+      margin: auto;
+      max-width: 60em;
+      padding: 3em 1em;
+      text-align: center;
+    }
+
+    .article-header h1 {
+      font-size: 3em;
+      margin: 0 0 0.5em 0;
+    }
+
+    @media (max-width: 1080px) {
+      .article-header h1 {
+        font-size: 2.3em;
+      }
+    }
+
+    .back-to-home {
+      padding: 0 1.5em;
+    }
+
+    .title {
+      text-align: center;
+      margin: 1em 1em 2em 1em;
+    }
+
+    .title h1 {
+      margin-bottom: 0;
+    }
+
+    .title p {
+      margin-top: 0.25em;
+    }
+
+    .search-form {
+      text-align: center;
+      margin: 0.8em 1em;
+    }
+
+    .search-form input,
+    .search-form button {
+      margin: 0.2em 0;
+    }
+
+    .posts li {
+      margin: 3em 0;
+    }
+
+    .posts li article {
+      padding: 0.5em 3em;
+    }
+
+    .posts li article .date {
+      margin-top: 0.5em;
+      font-size: 0.8em;
+    }
+
+    @media (max-width: 984px) {
+      .posts li article {
+        padding: 1.5em;
+      }
+    }
+
+    .posts li article h1 {
+      font-size: 1.5em;
+      margin: 1em 0 0 0;
+      font-weight: normal;
+    }
+
+    @media (max-width: 984px) {
+      .posts li article h1 {
+        font-size: 1.3em;
+      }
+    }
+
+    .posts {
+      padding: 0;
+      margin: 0;
+      list-style-type: none;
+    }
+
+    .see-the-code {
+      padding: 1.5em;
+      font-size: 0.8em;
+      text-align: right;
+    }
+
+    .discuss {
+      text-align: center;
+      font-style: italic;
+    }
+
+    .author {
+      text-align: center;
+      margin: 3em;
+      font-style: normal;
+    }
+
+    .more-posts {
+      padding: 1.5em 3em;
+      margin: auto;
+      background-color: white;
+      max-width: 35em;
+    }
+
+    .more-posts h2 {
+      margin-top: 1em;
+    }
+
+    .more-posts time {
+      font-size: 0.8em;
+    }
+
+    .headings {
+      position: absolute;
+      text-align: right;
+      font-size: 0.8em;
+      opacity: 0.5;
+      position: fixed;
+      display: none;
+    }
+
+    .headings ol {
+      margin: 6em 6em 1.5em 1.5em;
+      padding: 0;
+    }
+
+    .headings ol li {
+      list-style-type: none;
+      margin: 1.5em 0 0 0;
+    }
+
+    .headings ol li.h2 {
+      font-size: 0.8em;
+      opacity: 0.8;
+      margin: 0.7em 0 0 0;
+    }
+
+    .heading-link {
+      opacity: 0.4;
+      font-size: 2rem;
+    }
+
+    table {
+      border-spacing: 0;
+      font-size: 0.8em;
+    }
+
+    td {
+      padding: 1em;
+      border-left: 1px dotted #666;
+      border-top: 1px dotted #666;
+    }
+
+    td:last-child {
+      border-right: 1px dotted #666;
+    }
+
+    tr:last-child td {
+      border-bottom: 1px dotted #666;
+    }
+
+    /* Pygments syntax highlighting autumn theme */
+    td.linenos pre {
+      color: #000000;
+      background-color: #f0f0f0;
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+
+    span.linenos {
+      color: #000000;
+      background-color: #f0f0f0;
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+
+    td.linenos pre.special {
+      color: #000000;
+      background-color: #ffffc0;
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+
+    span.linenos.special {
+      color: #000000;
+      background-color: #ffffc0;
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+
+    .highlight .hll {
+      background-color: #ffffcc
+    }
+
+    .highlight {
+      background: #f0f0f0;
+    }
+
+    .highlight .c {
+      color: #60a0b0;
+      font-style: italic
+    }
+
+    .highlight .err {
+      border: 1px solid #FF0000
+    }
+
+    .highlight .k {
+      color: #007020;
+      font-weight: bold
+    }
+
+    .highlight .o {
+      color: #666666
+    }
+
+    .highlight .ch {
+      color: #60a0b0;
+      font-style: italic
+    }
+
+    .highlight .cm {
+      color: #60a0b0;
+      font-style: italic
+    }
+
+    .highlight .cp {
+      color: #007020
+    }
+
+    .highlight .cpf {
+      color: #60a0b0;
+      font-style: italic
+    }
+
+    .highlight .c1 {
+      color: #60a0b0;
+      font-style: italic
+    }
+
+    .highlight .cs {
+      color: #60a0b0;
+      background-color: #fff0f0
+    }
+
+    .highlight .gd {
+      color: #A00000
+    }
+
+    .highlight .ge {
+      font-style: italic
+    }
+
+    .highlight .gr {
+      color: #FF0000
+    }
+
+    .highlight .gh {
+      color: #000080;
+      font-weight: bold
+    }
+
+    .highlight .gi {
+      color: #00A000
+    }
+
+    .highlight .go {
+      color: #888888
+    }
+
+    .highlight .gp {
+      color: #c65d09;
+      font-weight: bold
+    }
+
+    .highlight .gs {
+      font-weight: bold
+    }
+
+    .highlight .gu {
+      color: #800080;
+      font-weight: bold
+    }
+
+    .highlight .gt {
+      color: #0044DD
+    }
+
+    .highlight .kc {
+      color: #007020;
+      font-weight: bold
+    }
+
+    .highlight .kd {
+      color: #007020;
+      font-weight: bold
+    }
+
+    .highlight .kn {
+      color: #007020;
+      font-weight: bold
+    }
+
+    .highlight .kp {
+      color: #007020
+    }
+
+    .highlight .kr {
+      color: #007020;
+      font-weight: bold
+    }
+
+    .highlight .kt {
+      color: #902000
+    }
+
+    .highlight .m {
+      color: #40a070
+    }
+
+    .highlight .s {
+      color: #4070a0
+    }
+
+    .highlight .na {
+      color: #4070a0
+    }
+
+    .highlight .nb {
+      color: #007020
+    }
+
+    .highlight .nc {
+      color: #0e84b5;
+      font-weight: bold
+    }
+
+    .highlight .no {
+      color: #60add5
+    }
+
+    .highlight .nd {
+      color: #555555;
+      font-weight: bold
+    }
+
+    .highlight .ni {
+      color: #d55537;
+      font-weight: bold
+    }
+
+    .highlight .ne {
+      color: #007020
+    }
+
+    .highlight .nf {
+      color: #06287e
+    }
+
+    .highlight .nl {
+      color: #002070;
+      font-weight: bold
+    }
+
+    .highlight .nn {
+      color: #0e84b5;
+      font-weight: bold
+    }
+
+    .highlight .nt {
+      color: #062873;
+      font-weight: bold
+    }
+
+    .highlight .nv {
+      color: #bb60d5
+    }
+
+    .highlight .ow {
+      color: #007020;
+      font-weight: bold
+    }
+
+    .highlight .w {
+      color: #bbbbbb
+    }
+
+    .highlight .mb {
+      color: #40a070
+    }
+
+    .highlight .mf {
+      color: #40a070
+    }
+
+    .highlight .mh {
+      color: #40a070
+    }
+
+    .highlight .mi {
+      color: #40a070
+    }
+
+    .highlight .mo {
+      color: #40a070
+    }
+
+    .highlight .sa {
+      color: #4070a0
+    }
+
+    .highlight .sb {
+      color: #4070a0
+    }
+
+    .highlight .sc {
+      color: #4070a0
+    }
+
+    .highlight .dl {
+      color: #4070a0
+    }
+
+    .highlight .sd {
+      color: #4070a0;
+      font-style: italic
+    }
+
+    .highlight .s2 {
+      color: #4070a0
+    }
+
+    .highlight .se {
+      color: #4070a0;
+      font-weight: bold
+    }
+
+    .highlight .sh {
+      color: #4070a0
+    }
+
+    .highlight .si {
+      color: #70a0d0;
+      font-style: italic
+    }
+
+    .highlight .sx {
+      color: #c65d09
+    }
+
+    .highlight .sr {
+      color: #235388
+    }
+
+    .highlight .s1 {
+      color: #4070a0
+    }
+
+    .highlight .ss {
+      color: #517918
+    }
+
+    .highlight .bp {
+      color: #007020
+    }
+
+    .highlight .fm {
+      color: #06287e
+    }
+
+    .highlight .vc {
+      color: #bb60d5
+    }
+
+    .highlight .vg {
+      color: #bb60d5
+    }
+
+    .highlight .vi {
+      color: #bb60d5
+    }
+
+    .highlight .vm {
+      color: #bb60d5
+    }
+
+    .highlight .il {
+      color: #40a070
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="back-to-home">
+  <p><a href="/">← Posts</a></h1></p>
+</nav>
+
+<header class="article-header">
+  <h1>Installing Symfony 2 by creating a github fork</h1>
+  <time datetime="2013-05-30">30th May 2013</time>
+</header>
+
+<nav class="headings">
+  <ol>
+    <li><a href="#top">↑ top</a></li>
+  </ol>
+</nav>
+
+<article>
+  <p>The Symfony 2 <a href="https://github.com/symfony/symfony-standard">standard project</a> suggests that you install it in <a href="https://github.com/symfony/symfony-standard/blob/900fc9d3cafa06a4b6d023b99d5e75fffaf74fe1/README.md#1-installing-the-standard-edition">one of two ways</a>:</p>
+
+<ul>
+  <li>Install it using <a href="http://getcomposer.org/">Composer</a> (which will retrieve the version that’s on <a href="https://packagist.org/">packigist</a>)</li>
+  <li>Download as an <a href="http://symfony.com/download">archive</a> from the <a href="http://symfony.com/">symfony website</a></li>
+</ul>
+
+<p>However, as I’m a developer, I’m used to using github, and I don’t need the code-base to be particularly stable at the moment - I chose a third option:</p>
+
+<ul>
+  <li>Installing from a fork of the Symfony 2 standard project</li>
+</ul>
+
+<p>The danger of forking the actual repository is that it might not be stable. There could be unfixed bugs that aren’t in the official releases. The advantage is that it’s particularly easy to pull in new changes from the Symfony repository.</p>
+
+<h2 id="the-environment">The environment</h2>
+
+<p>I’m doing all this on <a href="http://www.ubuntu.com/">Ubuntu</a> Raring Ringtail (13.04). This post will almost certainly work in a similar way for any modern debian-based OS, but it will be fairly useless for yum-based OSes, and completely useless for Windows.</p>
+
+<h2 id="install-packages">Install packages</h2>
+
+<p>Before we start, you’ll need a <a href="https://github.com/">github</a> account, and you’ll need to install <a href="http://git-scm.com/">git</a>, <a href="http://www.mysql.com/">MySQL</a>, <a href="https://launchpad.net/ubuntu/raring/+package/php5-cli">php5-cli</a>, <a href="https://launchpad.net/ubuntu/raring/+package/php5-dev">php5-dev</a>, <a href="https://launchpad.net/ubuntu/raring/+package/php5-mysql">php5-mysql</a>, <a href="https://launchpad.net/ubuntu/raring/+package/php5-intl">php5-intl</a> and <a href="https://launchpad.net/ubuntu/raring/+package/php-apc">php-apc</a> on your local computer:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Install packages</span>
+<span class="nv">$ </span><span class="nb">sudo </span>apt-get <span class="nb">install </span>git php5-cli php5-dev mysql-server php5-mysql php5-intl php-apc
+</code></pre></div></div>
+
+<h2 id="configuration-tweaks">Configuration tweaks</h2>
+
+<p>We must make sure that <code class="language-plaintext highlighter-rouge">date.timezone</code> is set to a <a href="http://www.php.net/manual/en/timezones.europe.php">valid timezone</a>. Symfony recommends that we set <code class="language-plaintext highlighter-rouge">short_open_tag</code> to <code class="language-plaintext highlighter-rouge">Off</code>, so we might as well change that at the same time:</p>
+
+<div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">; /etc/php5/cli/php.ini
+</span>
+<span class="nn">[php]</span>
+<span class="c">; around line 213
+; change the value to "off"
+</span><span class="py">short_open_tag</span> <span class="p">=</span> <span class="s">Off</span>
+
+<span class="nn">[Date]</span>
+<span class="c">; around line 876
+; uncomment and change value
+</span><span class="py">date.timezone</span> <span class="p">=</span> <span class="s">Europe/London</span>
+</code></pre></div></div>
+
+<p>Symfony also recommends that we set XDebug to allow a high nesting level:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Add to PHP configuration      </span>
+<span class="nv">$ </span><span class="nb">echo</span> <span class="s2">"xdebug.max_nesting_level=250"</span> | <span class="nb">sudo tee</span> <span class="nt">-a</span> /etc/php5/mods-available/xdebug.ini
+</code></pre></div></div>
+
+<p>And that MySQL is set to UTF-8 by default:</p>
+
+<div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">; /etc/mysql/my.cnf
+</span>
+<span class="nn">[mysqld]</span>
+<span class="c">; around line 30
+; add these new keys
+</span><span class="py">collation-server</span> <span class="p">=</span> <span class="s">utf8_general_ci</span>
+<span class="py">character-set-server</span> <span class="p">=</span> <span class="s">utf8</span>
+</code></pre></div></div>
+
+<h2 id="fork-the-repository">Fork the repository</h2>
+
+<p><a href="https://help.github.com/articles/fork-a-repo">Forking a github repository</a> is as easy as navigating to the <a href="https://github.com/nottrobin/symfony-standard">repository page</a> and clicking the “fork” button. Note down the URL for your repository and clone it and change to the directory, e.g.:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>git clone git@github.com:&lt;yourusername&gt;/symfony-standard.git
+<span class="nv">$ </span><span class="nb">cd </span>symfony-standard
+</code></pre></div></div>
+
+<h2 id="install-dependencies-and-configure">Install dependencies and configure</h2>
+
+<p>Now you’ll need <code class="language-plaintext highlighter-rouge">composer</code> to install dependencies:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>curl <span class="nt">-sS</span> https://getcomposer.org/installer | php
+<span class="nv">$ </span>php composer.phar <span class="nb">install</span>
+</code></pre></div></div>
+<p>When it prompts you for input, you’ll probably want to leave most things as default (blank), except the database password for <code class="language-plaintext highlighter-rouge">root</code> user if you set one:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Some parameters are missing. Please provide them.
+database_driver <span class="o">(</span>pdo_mysql<span class="o">)</span>:
+database_host <span class="o">(</span>127.0.0.1<span class="o">)</span>:
+database_port <span class="o">(</span>null<span class="o">)</span>:
+database_name <span class="o">(</span>symfony<span class="o">)</span>:
+database_user <span class="o">(</span>root<span class="o">)</span>:
+database_password <span class="o">(</span>null<span class="o">)</span>:&lt;yourRootDbPassword&gt;
+mailer_transport <span class="o">(</span>smtp<span class="o">)</span>:
+mailer_host <span class="o">(</span>127.0.0.1<span class="o">)</span>:
+mailer_user <span class="o">(</span>null<span class="o">)</span>:
+mailer_password <span class="o">(</span>null<span class="o">)</span>:
+locale <span class="o">(</span>en<span class="o">)</span>:en-gb
+secret <span class="o">(</span>ThisTokenIsNotSoSecretChangeIt<span class="o">)</span>:somesecretkeyorother
+</code></pre></div></div>
+
+<p>Now you can commit your <a href="http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"><code class="language-plaintext highlighter-rouge">composer.lock</code></a> into your repository fork to make sure your dependency versions stay reliable:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>git add composer.lock
+<span class="nv">$ </span>git commit <span class="nt">-m</span> <span class="s1">'Add composer.lock: dependency versions'</span>
+</code></pre></div></div>
+
+<h2 id="check-everything-works">Check everything works</h2>
+
+<p>Now hopefully if you run the check, you’ll see a long list of “OK”s:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>php ./app/check.php
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>********************************
+*                              *
+*  Symfony requirements check  *
+*                              *
+********************************
+...
+ OK       PHP version must be at least 5.3.3 (5.4.9-4ubuntu2 installed)
+ OK       PHP version must not be 5.3.16 as Symfony won't work properly with it
+ OK       Vendor libraries must be installed
+... etc
+</code></pre></div></div>
+
+<p>If you get <code class="language-plaintext highlighter-rouge">error</code>s you must fix them. If you get <code class="language-plaintext highlighter-rouge">warning</code>s feel free to ignore them.</p>
+
+<h3 id="create-the-database">Create the database</h3>
+
+<p>You can now, if you want, use Doctrine to create the database:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>php app/console doctrine:database:create
+</code></pre></div></div>
+
+<h3 id="run-the-php-server">Run the PHP server</h3>
+
+<p>If the PHP version listed in the output of <code class="language-plaintext highlighter-rouge">check.php</code> is at least <code class="language-plaintext highlighter-rouge">5.4</code> (see above, mine is <code class="language-plaintext highlighter-rouge">5.4.9-4ubuntu2</code>) then you can run the PHP server. <a href="http://askubuntu.com/questions/109404/how-do-i-install-latest-php-in-supported-ubuntu-versions-like-5-4-x-in-ubuntu-1">You can update</a> to <code class="language-plaintext highlighter-rouge">5.4</code> if you don’t have it already.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>php ./app/console server:run
+</code></pre></div></div>
+
+<p>And then browse to <a href="http://localhost:8000/">localhost:8000</a>.</p>
+
+
+  
+</article>
+
+<script>
+  /**
+   * Document outline
+   */
+
+  // Get elements
+  let article = document.querySelector("article");
+  let headings = document.querySelector(".headings");
+  let list = headings.querySelector("ol");
+
+  // Populate nav
+  article.querySelectorAll("h1, h2").forEach(function (heading) {
+    let item = document.createElement("li");
+    item.classList.add(heading.tagName.toLowerCase());
+    item.innerHTML = `<a href="#${heading.id}">${heading.textContent}</a>`;
+    list.appendChild(item);
+  });
+
+  function toggleHeadings() {
+    // Don't show if there's not space
+    if (article.offsetLeft < 180) {
+      headings.style.display = "none";
+      return;
+    }
+
+    // More compact layout
+    if (article.offsetLeft < 350) {
+      list.style.marginRight = "1.5em";
+    } else {
+      list.style.marginRight = "6em";
+    }
+
+    let articleBounding = article.getBoundingClientRect();
+    let rightOffset = document.body.offsetWidth - articleBounding.left;
+
+    headings.style.display = "block";
+    headings.style.right = rightOffset + "px";
+
+    if (articleBounding.top > 0) {
+      headings.style.top = articleBounding.top + "px";
+    } else {
+      headings.style.top = 0;
+    }
+  }
+
+  window.addEventListener('scroll', toggleHeadings);
+  window.addEventListener('resize', toggleHeadings);
+
+  toggleHeadings();
+</script>
+
+<address class="author">
+  By <a href="https://twitter.com/nottrobin">@nottrobin</a>
+</address>
+
+
+
+
+
+<nav class="more-posts">
+  <h2>More posts</h2>
+  
+  <p>
+    <a href="/blogging-from-my-phone-with-gitjournal">Blogging from my phone with GitJournal</a><br>
+    <time datetime="2022-06-05">5th June 2022</time>
+  </p>
+  
+  
+  <p>
+    <a href="/create-github-repositories-from-the-command-line">Using Github's API to create repositories from the command-line</a><br>
+    <time datetime="2013-06-06">6th June 2013</time>
+  </p>
+  
+  
+  <p>
+    <a href="/why-i-love-the-internet">Why I love the internet</a><br>
+    <time datetime="2013-05-29">29th May 2013</time>
+  </p>
+  
+</nav>
+
+
+  <footer class="see-the-code">
+    <a href="https://github.com/nottrobin/robinwinslow.uk">☵ See the code</a>
+  </footer>
+
+  <!-- Instant.page -->
+  <script>
+    let mouseoverTimer; let lastTouchTimestamp; const prefetches = new Set; const prefetchElement = document.createElement("link"); const isSupported = prefetchElement.relList && prefetchElement.relList.supports && prefetchElement.relList.supports("prefetch") && window.IntersectionObserver && "isIntersecting" in IntersectionObserverEntry.prototype; const allowQueryString = "instantAllowQueryString" in document.body.dataset; const allowExternalLinks = "instantAllowExternalLinks" in document.body.dataset; const useWhitelist = "instantWhitelist" in document.body.dataset; const mousedownShortcut = "instantMousedownShortcut" in document.body.dataset; const DELAY_TO_NOT_BE_CONSIDERED_A_TOUCH_INITIATED_ACTION = 1111; let delayOnHover = 65; let useMousedown = false; let useMousedownOnly = false; let useViewport = false; if ("instantIntensity" in document.body.dataset) { const intensity = document.body.dataset.instantIntensity; if (intensity.substr(0, "mousedown".length) == "mousedown") { useMousedown = true; if (intensity == "mousedown-only") { useMousedownOnly = true } } else if (intensity.substr(0, "viewport".length) == "viewport") { if (!(navigator.connection && (navigator.connection.saveData || navigator.connection.effectiveType && navigator.connection.effectiveType.includes("2g")))) { if (intensity == "viewport") { if (document.documentElement.clientWidth * document.documentElement.clientHeight < 45e4) { useViewport = true } } else if (intensity == "viewport-all") { useViewport = true } } } else { const milliseconds = parseInt(intensity); if (!isNaN(milliseconds)) { delayOnHover = milliseconds } } } if (isSupported) { const eventListenersOptions = { capture: true, passive: true }; if (!useMousedownOnly) { document.addEventListener("touchstart", touchstartListener, eventListenersOptions) } if (!useMousedown) { document.addEventListener("mouseover", mouseoverListener, eventListenersOptions) } else if (!mousedownShortcut) { document.addEventListener("mousedown", mousedownListener, eventListenersOptions) } if (mousedownShortcut) { document.addEventListener("mousedown", mousedownShortcutListener, eventListenersOptions) } if (useViewport) { let triggeringFunction; if (window.requestIdleCallback) { triggeringFunction = (callback => { requestIdleCallback(callback, { timeout: 1500 }) }) } else { triggeringFunction = (callback => { callback() }) } triggeringFunction(() => { const intersectionObserver = new IntersectionObserver(entries => { entries.forEach(entry => { if (entry.isIntersecting) { const linkElement = entry.target; intersectionObserver.unobserve(linkElement); preload(linkElement.href) } }) }); document.querySelectorAll("a").forEach(linkElement => { if (isPreloadable(linkElement)) { intersectionObserver.observe(linkElement) } }) }) } } function touchstartListener(event) { lastTouchTimestamp = performance.now(); const linkElement = event.target.closest("a"); if (!isPreloadable(linkElement)) { return } preload(linkElement.href) } function mouseoverListener(event) { if (performance.now() - lastTouchTimestamp < DELAY_TO_NOT_BE_CONSIDERED_A_TOUCH_INITIATED_ACTION) { return } const linkElement = event.target.closest("a"); if (!isPreloadable(linkElement)) { return } linkElement.addEventListener("mouseout", mouseoutListener, { passive: true }); mouseoverTimer = setTimeout(() => { preload(linkElement.href); mouseoverTimer = undefined }, delayOnHover) } function mousedownListener(event) { const linkElement = event.target.closest("a"); if (!isPreloadable(linkElement)) { return } preload(linkElement.href) } function mouseoutListener(event) { if (event.relatedTarget && event.target.closest("a") == event.relatedTarget.closest("a")) { return } if (mouseoverTimer) { clearTimeout(mouseoverTimer); mouseoverTimer = undefined } } function mousedownShortcutListener(event) { if (performance.now() - lastTouchTimestamp < DELAY_TO_NOT_BE_CONSIDERED_A_TOUCH_INITIATED_ACTION) { return } const linkElement = event.target.closest("a"); if (event.which > 1 || event.metaKey || event.ctrlKey) { return } if (!linkElement) { return } linkElement.addEventListener("click", function (event) { if (event.detail == 1337) { return } event.preventDefault() }, { capture: true, passive: false, once: true }); const customEvent = new MouseEvent("click", { view: window, bubbles: true, cancelable: false, detail: 1337 }); linkElement.dispatchEvent(customEvent) } function isPreloadable(linkElement) { if (!linkElement || !linkElement.href) { return } if (useWhitelist && !("instant" in linkElement.dataset)) { return } if (!allowExternalLinks && linkElement.origin != location.origin && !("instant" in linkElement.dataset)) { return } if (!["http:", "https:"].includes(linkElement.protocol)) { return } if (linkElement.protocol == "http:" && location.protocol == "https:") { return } if (!allowQueryString && linkElement.search && !("instant" in linkElement.dataset)) { return } if (linkElement.hash && linkElement.pathname + linkElement.search == location.pathname + location.search) { return } if ("noInstant" in linkElement.dataset) { return } return true } function preload(url) { if (prefetches.has(url)) { return } const prefetcher = document.createElement("link"); prefetcher.rel = "prefetch"; prefetcher.href = url; document.head.appendChild(prefetcher); prefetches.add(url) }
+  </script>
+</body>
+
+</html>

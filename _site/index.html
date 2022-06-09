@@ -1,0 +1,1529 @@
+<!doctype html>
+
+<!--
+## Features:
+
+- Keep CSS inline: It will be small enough not to add much weight to the page, which means it's better to avoid the extra HTTP call to request CSS
+- Use system fonts: But it's hard to find a nice system font for both Linux, Windows and MacOS
+
+- Google colours for links
+- Visual box around article to highlight it
+- Navigation - don't get in the way
+- 
+
+JavaScript:
+
+- Only use enhancements that aren't necessary:
+  - Document outline on the left
+  - Add "title" to links
+
+-->
+
+<html lang="en">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Thoughts</title>
+
+  <meta name="description" content="Thinkings on life, technology and politics.">
+
+  <!-- Social media -->
+  <meta property='article:author' content='https://twitter.com/nottrobin' />
+  <meta property='article:publisher' content='https://robinwinslow.uk' />
+  <meta property="og:image" content="https://www.thebluediamondgallery.com/tablet/images/blog.jpg" />
+  <meta property="og:url" content="https://robinwinslow.uk/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="A list of thoughts" />
+  <!-- Keep Terry Pratchett alive in the network https://xclacksoverhead.org/home/about -->
+  <meta http-equiv="x-clacks-overhead" content="GNU Terry Pratchett" />
+
+  <link type="application/atom+xml" rel="alternative" href="/rss.xml" />
+
+  <style>
+    /**
+       * Font size
+       * 
+       * For usability, bigger text is almost always better. People continue to Especially as resolutions get higher
+       * 
+       */
+
+    body {
+      font-family: "dejavu Sans light", sans-serif;
+      font-size: 1.5rem;
+      background-color: #efefef;
+      margin: 0;
+    }
+
+    time,
+    .subtitle {
+      color: #767676;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-weight: normal;
+      margin-top: 2em;
+      margin-bottom: 1em;
+    }
+
+    h1 {
+      font-size: 2em;
+    }
+
+    h2 {
+      font-size: 1.5em;
+    }
+
+    h3 {
+      font-size: 1.2em;
+    }
+
+    h4 {
+      font-size: 1.1em;
+    }
+
+    p {
+      line-height: 1.5em;
+    }
+
+    a {
+      color: #1a0dab;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    a:visited {
+      color: #551A8B;
+    }
+
+    input,
+    button {
+      appearance: none;
+      border: 1px solid lightgray;
+      font-size: 1em;
+      max-width: 100%;
+      padding: 0.5em 0.8em;
+    }
+
+    article {
+      margin: auto;
+      padding: 3em 5em;
+      max-width: 35em;
+      background-color: white;
+    }
+
+    @media (max-width: 1080px) {
+      article {
+        padding: 0.5em 1.5em;
+      }
+    }
+
+    article p,
+    article ul,
+    article ol {
+      margin-block-start: 1.5em;
+      margin-block-end: 1.5em;
+    }
+
+    article li {
+      margin-block-start: 1em;
+      margin-block-end: 1em;
+      line-height: 1.5em;
+    }
+
+    blockquote {
+      padding: 1em 1.5em;
+      margin: 1.5em 0;
+      border-left: 2px solid #ddd;
+      font-style: italic;
+    }
+
+    blockquote p {
+      display: inline;
+    }
+
+    pre {
+      overflow-x: auto;
+      background-color: #eee;
+      padding: 1em;
+      line-height: 125%;
+    }
+
+    img {
+      max-width: 100%;
+    }
+
+    code {
+      padding: 0.125em 0.25em;
+      line-height: 1.6em;
+      margin: 0;
+      font-size: 0.8em;
+      background-color: #f0f0f0;
+      border-radius: 6px;
+    }
+
+    pre code {
+      line-height: inherit;
+      padding: 0;
+    }
+
+    hr {
+      margin: 3em 0;
+    }
+
+    /* Classes */
+    .article-header {
+      margin: auto;
+      max-width: 60em;
+      padding: 3em 1em;
+      text-align: center;
+    }
+
+    .article-header h1 {
+      font-size: 3em;
+      margin: 0 0 0.5em 0;
+    }
+
+    @media (max-width: 1080px) {
+      .article-header h1 {
+        font-size: 2.3em;
+      }
+    }
+
+    .back-to-home {
+      padding: 0 1.5em;
+    }
+
+    .title {
+      text-align: center;
+      margin: 1em 1em 2em 1em;
+    }
+
+    .title h1 {
+      margin-bottom: 0;
+    }
+
+    .title p {
+      margin-top: 0.25em;
+    }
+
+    .search-form {
+      text-align: center;
+      margin: 0.8em 1em;
+    }
+
+    .search-form input,
+    .search-form button {
+      margin: 0.2em 0;
+    }
+
+    .posts li {
+      margin: 3em 0;
+    }
+
+    .posts li article {
+      padding: 0.5em 3em;
+    }
+
+    .posts li article .date {
+      margin-top: 0.5em;
+      font-size: 0.8em;
+    }
+
+    @media (max-width: 984px) {
+      .posts li article {
+        padding: 1.5em;
+      }
+    }
+
+    .posts li article h1 {
+      font-size: 1.5em;
+      margin: 1em 0 0 0;
+      font-weight: normal;
+    }
+
+    @media (max-width: 984px) {
+      .posts li article h1 {
+        font-size: 1.3em;
+      }
+    }
+
+    .posts {
+      padding: 0;
+      margin: 0;
+      list-style-type: none;
+    }
+
+    .see-the-code {
+      padding: 1.5em;
+      font-size: 0.8em;
+      text-align: right;
+    }
+
+    .discuss {
+      text-align: center;
+      font-style: italic;
+    }
+
+    .author {
+      text-align: center;
+      margin: 3em;
+      font-style: normal;
+    }
+
+    .more-posts {
+      padding: 1.5em 3em;
+      margin: auto;
+      background-color: white;
+      max-width: 35em;
+    }
+
+    .more-posts h2 {
+      margin-top: 1em;
+    }
+
+    .more-posts time {
+      font-size: 0.8em;
+    }
+
+    .headings {
+      position: absolute;
+      text-align: right;
+      font-size: 0.8em;
+      opacity: 0.5;
+      position: fixed;
+      display: none;
+    }
+
+    .headings ol {
+      margin: 6em 6em 1.5em 1.5em;
+      padding: 0;
+    }
+
+    .headings ol li {
+      list-style-type: none;
+      margin: 1.5em 0 0 0;
+    }
+
+    .headings ol li.h2 {
+      font-size: 0.8em;
+      opacity: 0.8;
+      margin: 0.7em 0 0 0;
+    }
+
+    .heading-link {
+      opacity: 0.4;
+      font-size: 2rem;
+    }
+
+    table {
+      border-spacing: 0;
+      font-size: 0.8em;
+    }
+
+    td {
+      padding: 1em;
+      border-left: 1px dotted #666;
+      border-top: 1px dotted #666;
+    }
+
+    td:last-child {
+      border-right: 1px dotted #666;
+    }
+
+    tr:last-child td {
+      border-bottom: 1px dotted #666;
+    }
+
+    /* Pygments syntax highlighting autumn theme */
+    td.linenos pre {
+      color: #000000;
+      background-color: #f0f0f0;
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+
+    span.linenos {
+      color: #000000;
+      background-color: #f0f0f0;
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+
+    td.linenos pre.special {
+      color: #000000;
+      background-color: #ffffc0;
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+
+    span.linenos.special {
+      color: #000000;
+      background-color: #ffffc0;
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+
+    .highlight .hll {
+      background-color: #ffffcc
+    }
+
+    .highlight {
+      background: #f0f0f0;
+    }
+
+    .highlight .c {
+      color: #60a0b0;
+      font-style: italic
+    }
+
+    .highlight .err {
+      border: 1px solid #FF0000
+    }
+
+    .highlight .k {
+      color: #007020;
+      font-weight: bold
+    }
+
+    .highlight .o {
+      color: #666666
+    }
+
+    .highlight .ch {
+      color: #60a0b0;
+      font-style: italic
+    }
+
+    .highlight .cm {
+      color: #60a0b0;
+      font-style: italic
+    }
+
+    .highlight .cp {
+      color: #007020
+    }
+
+    .highlight .cpf {
+      color: #60a0b0;
+      font-style: italic
+    }
+
+    .highlight .c1 {
+      color: #60a0b0;
+      font-style: italic
+    }
+
+    .highlight .cs {
+      color: #60a0b0;
+      background-color: #fff0f0
+    }
+
+    .highlight .gd {
+      color: #A00000
+    }
+
+    .highlight .ge {
+      font-style: italic
+    }
+
+    .highlight .gr {
+      color: #FF0000
+    }
+
+    .highlight .gh {
+      color: #000080;
+      font-weight: bold
+    }
+
+    .highlight .gi {
+      color: #00A000
+    }
+
+    .highlight .go {
+      color: #888888
+    }
+
+    .highlight .gp {
+      color: #c65d09;
+      font-weight: bold
+    }
+
+    .highlight .gs {
+      font-weight: bold
+    }
+
+    .highlight .gu {
+      color: #800080;
+      font-weight: bold
+    }
+
+    .highlight .gt {
+      color: #0044DD
+    }
+
+    .highlight .kc {
+      color: #007020;
+      font-weight: bold
+    }
+
+    .highlight .kd {
+      color: #007020;
+      font-weight: bold
+    }
+
+    .highlight .kn {
+      color: #007020;
+      font-weight: bold
+    }
+
+    .highlight .kp {
+      color: #007020
+    }
+
+    .highlight .kr {
+      color: #007020;
+      font-weight: bold
+    }
+
+    .highlight .kt {
+      color: #902000
+    }
+
+    .highlight .m {
+      color: #40a070
+    }
+
+    .highlight .s {
+      color: #4070a0
+    }
+
+    .highlight .na {
+      color: #4070a0
+    }
+
+    .highlight .nb {
+      color: #007020
+    }
+
+    .highlight .nc {
+      color: #0e84b5;
+      font-weight: bold
+    }
+
+    .highlight .no {
+      color: #60add5
+    }
+
+    .highlight .nd {
+      color: #555555;
+      font-weight: bold
+    }
+
+    .highlight .ni {
+      color: #d55537;
+      font-weight: bold
+    }
+
+    .highlight .ne {
+      color: #007020
+    }
+
+    .highlight .nf {
+      color: #06287e
+    }
+
+    .highlight .nl {
+      color: #002070;
+      font-weight: bold
+    }
+
+    .highlight .nn {
+      color: #0e84b5;
+      font-weight: bold
+    }
+
+    .highlight .nt {
+      color: #062873;
+      font-weight: bold
+    }
+
+    .highlight .nv {
+      color: #bb60d5
+    }
+
+    .highlight .ow {
+      color: #007020;
+      font-weight: bold
+    }
+
+    .highlight .w {
+      color: #bbbbbb
+    }
+
+    .highlight .mb {
+      color: #40a070
+    }
+
+    .highlight .mf {
+      color: #40a070
+    }
+
+    .highlight .mh {
+      color: #40a070
+    }
+
+    .highlight .mi {
+      color: #40a070
+    }
+
+    .highlight .mo {
+      color: #40a070
+    }
+
+    .highlight .sa {
+      color: #4070a0
+    }
+
+    .highlight .sb {
+      color: #4070a0
+    }
+
+    .highlight .sc {
+      color: #4070a0
+    }
+
+    .highlight .dl {
+      color: #4070a0
+    }
+
+    .highlight .sd {
+      color: #4070a0;
+      font-style: italic
+    }
+
+    .highlight .s2 {
+      color: #4070a0
+    }
+
+    .highlight .se {
+      color: #4070a0;
+      font-weight: bold
+    }
+
+    .highlight .sh {
+      color: #4070a0
+    }
+
+    .highlight .si {
+      color: #70a0d0;
+      font-style: italic
+    }
+
+    .highlight .sx {
+      color: #c65d09
+    }
+
+    .highlight .sr {
+      color: #235388
+    }
+
+    .highlight .s1 {
+      color: #4070a0
+    }
+
+    .highlight .ss {
+      color: #517918
+    }
+
+    .highlight .bp {
+      color: #007020
+    }
+
+    .highlight .fm {
+      color: #06287e
+    }
+
+    .highlight .vc {
+      color: #bb60d5
+    }
+
+    .highlight .vg {
+      color: #bb60d5
+    }
+
+    .highlight .vi {
+      color: #bb60d5
+    }
+
+    .highlight .vm {
+      color: #bb60d5
+    }
+
+    .highlight .il {
+      color: #40a070
+    }
+  </style>
+</head>
+
+<body>
+  <header class="title">
+  <h1>Posts</h1>
+  <p>by <a href="https://twitter.com/nottrobin">@nottrobin</a></p>
+</header>
+
+<form class="search-form" action="https://www.google.com/search">
+  <input type="hidden" name="sitesearch" value="robinwinslow.uk">
+  <input id="search-box" type="search" name="q">
+  <label for="search-box">
+    <button type="submit">Search posts</button>
+  </label>
+</form>
+
+<ol class="posts">
+  
+  
+    <li>
+      <article>
+        <a href="/blogging-from-my-phone-with-gitjournal"><h1>Blogging from my phone with GitJournal</h1></a>
+        <p class="date"><time datetime="2022-06-05">5th June 2022</time></p>
+        <p>GitJournal is a great way to publish to a GitHub-hosted Jekyll blog from an Android phone</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/hate-paywalls-12ft.io-is-the-answer"><h1>Hate paywalls? 12ft.io is the answer</h1></a>
+        <p class="date"><time datetime="2022-06-04">4th June 2022</time></p>
+        <p>After trying many ways to get around paywalls, I've landed on 12ft.io. It's simply awesome.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/freedom-from-the-tyranny-of-metrics"><h1>Freedom from the tyranny of metrics</h1></a>
+        <p class="date"><time datetime="2022-02-19">19th February 2022</time></p>
+        <p>I've finally removed Google Analytics from my site</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/writing-for-the-web"><h1>Writing for the web</h1></a>
+        <p class="date"><time datetime="2022-01-13">13th January 2022</time></p>
+        <p>The contents of a talk I'm giving tomorrow on best practices for online writing</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/api-design"><h1>Web Api Design by Brian Mulloy</h1></a>
+        <p class="date"><time datetime="2021-09-21">21st September 2021</time></p>
+        <p>Crafting interfaces that developers love</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/links"><h1>Sources of good information</h1></a>
+        <p class="date"><time datetime="2021-06-29">29th June 2021</time></p>
+        <p>An organised list of links to good sources of information</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/regex"><h1>Regex basics</h1></a>
+        <p class="date"><time datetime="2021-02-17">17th February 2021</time></p>
+        <p>An overview of regex and how to use it, from a few different angles. Including appropriate warnings like 'avoid regex'.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/font-layout-shift"><h1>Font loading performance and Cumulative Layout Shift</h1></a>
+        <p class="date"><time datetime="2021-02-02">2nd February 2021</time></p>
+        <p>Most sites should use "font-display: optional"</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/writing-gradually"><h1>Writing blog posts gradually</h1></a>
+        <p class="date"><time datetime="2020-12-03">3rd December 2020</time></p>
+        <p>I'm trying to flesh out a scheme for realistic daily writing, in the open</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/baby-products-reviewed"><h1>Baby & toddler products, reviewed (work in progress)</h1></a>
+        <p class="date"><time datetime="2020-11-26">26th November 2020</time></p>
+        <p>Reviews of baby products we've bought over the last few years</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/why-have-a-blog"><h1>Why have a blog?</h1></a>
+        <p class="date"><time datetime="2020-11-16">16th November 2020</time></p>
+        <p>Laying out the goals & principles for my site</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/a-sneak-preview"><h1>A sneak preview</h1></a>
+        <p class="date"><time datetime="2020-11-16">16th November 2020</time></p>
+        <p>Some posts I hope to write over the next few days</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/happy-deepavali"><h1>Happy Deepavali!</h1></a>
+        <p class="date"><time datetime="2020-11-14">14th November 2020</time></p>
+        <p>I had a lovely day. I'm exhausted.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/publish-early-publish-often"><h1>Publish early, publish often</h1></a>
+        <p class="date"><time datetime="2020-11-14">14th November 2020</time></p>
+        <p>Why publishing unpolished, quick drafts may be a good strategy</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/i-am-a-blogger"><h1>I am a blogger</h1></a>
+        <p class="date"><time datetime="2020-11-13">13th November 2020</time></p>
+        <p>Building a daily writing habit</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/pragmatic-testing"><h1>Effective testing (work in progress)</h1></a>
+        <p class="date"><time datetime="2020-06-30">30th June 2020</time></p>
+        <p>How to navigate the various zealotry about testing your programs</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/avoid-dropped-connections-in-nginx-containers"><h1>Avoiding dropped connections in nginx containers with "STOPSIGNAL SIGQUIT"</h1></a>
+        <p class="date"><time datetime="2019-11-18">18th November 2019</time></p>
+        <p>By default, Nginx will terminate abruptly when stopped. This can easily lead to dropped connections in production services. SIGQUIT is the answer.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/learning-lxd"><h1>How to use Linux Containers with LXD, and why you might want to</h1></a>
+        <p class="date"><time datetime="2019-02-04">4th February 2019</time></p>
+        <p>Getting up and running with LXD containers - Quick usage; basic networking; sharing folders with write access</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/how-to-manage-git-history"><h1>How to manage your Git history: Tips for keeping your commits tidy</h1></a>
+        <p class="date"><time datetime="2018-12-11">11th December 2018</time></p>
+        <p>A number of techniques I use frequently for maintaining control over my Git commit history in my feature branches.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/a-terminal-users-thought-process"><h1>Command-line usability: A terminal user's thought process</h1></a>
+        <p class="date"><time datetime="2017-09-07">7th September 2017</time></p>
+        <p>As a terminal user with a keen interest in usability, I explored my thought process when learning a new CLI tool, and made some basic UX recommendations.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/fix-docker-networking-dns"><h1>Fix Docker's networking DNS config</h1></a>
+        <p class="date"><time datetime="2016-06-22">22nd June 2016</time></p>
+        <p>Within certain networks, docker is unable to resolve DNS correctly. When this happens, here's how to fix it.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/adding-cache-headers-to-django"><h1>Django HTTP headers: Controlling caching on cn.ubuntu.com</h1></a>
+        <p class="date"><time datetime="2016-02-24">24th February 2016</time></p>
+        <p>As optimising web performance becomes more and more important, it's becoming essential to carefully manage your caching headers. But Django doesn't make it hat easy.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/simplest-wsgi-application"><h1>Creating a minimal Python application server for experimenting</h1></a>
+        <p class="date"><time datetime="2016-02-13">13th February 2016</time></p>
+        <p>As a web developer, it can be incredibly useful to be able to spin up a quick server to inspect and manipulate raw requests. And if you're used to working in Python, this little script is just the ticket.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/free-https-custom-hosting"><h1>How to host your static site with HTTPS on GitHub Pages and CloudFlare</h1></a>
+        <p class="date"><time datetime="2016-02-12">12th February 2016</time></p>
+        <p>The combination of the free services from CloudFlare and Github Pages make it incredibly easy to host a secure website.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/discipline"><h1>Gaining discipline</h1></a>
+        <p class="date"><time datetime="2015-12-31">31st December 2015</time></p>
+        <p>I have trouble being disciplined, and it prevents my doing a lot of stuff I really wanna do.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/common-vagrant-problems"><h1>Common Vagrant problems</h1></a>
+        <p class="date"><time datetime="2015-11-30">30th November 2015</time></p>
+        <p>Some common issues that I've found with setting up Vagrant boxes</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/why-migration-should-increase"><h1>Why migration should increase</h1></a>
+        <p class="date"><time datetime="2015-11-14">14th November 2015</time></p>
+        <p>I am a strong advocate of migration to the UK. I believe it's the only ethical and economically responsible position to hold.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/junior-doctors-complaining"><h1>What are "junior" doctors complaining about?</h1></a>
+        <p class="date"><time datetime="2015-10-23">23rd October 2015</time></p>
+        <p>I answer a bunch of potential questions about junior doctors and the changes to their contract.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/pycon-python-learnings"><h1>Python learnings from PyCon</h1></a>
+        <p class="date"><time datetime="2015-09-28">28th September 2015</time></p>
+        <p>Interesting technical talks I heard at my first PyCon.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/prepare-for-ubuntu-freezing"><h1>Prepare for when Ubuntu freezes</h1></a>
+        <p class="date"><time datetime="2015-09-25">25th September 2015</time></p>
+        <p>I just discovered this one neat trick to free up RAM in Ubuntu even when my mouse and keyboard stop responding.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/nhs-behind-the-news"><h1>How the NHS are mitigating sensationalist news headlines</h1></a>
+        <p class="date"><time datetime="2015-09-25">25th September 2015</time></p>
+        <p>The NHS's 'behind the news' series attempts to provide a more accurate summary of health topics which may be inaccurately covered in the news</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/pycon-friendly-inspiring"><h1>Keynotes from my first PyCon - friendly and inspiring</h1></a>
+        <p class="date"><time datetime="2015-09-23">23rd September 2015</time></p>
+        <p>A report on my experience of the keynote speeches at my first PyCon.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/letters-about-refugees"><h1>Letters about refugees</h1></a>
+        <p class="date"><time datetime="2015-09-19">19th September 2015</time></p>
+        <p>My correspondence with David Mackintosh, the Conservative MP for Northampton (my new home) about the refugee crisis. Spoiler: We didn't agree.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/simone-dconstruct-ramble"><h1>Nina Simone, social injustice and the urge to write</h1></a>
+        <p class="date"><time datetime="2015-09-12">12th September 2015</time></p>
+        <p>A rambing thought piece on why I'm going to make a renewed effort to write more.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/installing-docker-on-ubuntu"><h1>Getting Docker running on Ubuntu 14.04</h1></a>
+        <p class="date"><time datetime="2015-04-01">1st April 2015</time></p>
+        <p>There are more steps than there should be to get docker running on ubuntu 14.04. I outline them here.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/foreigners-and-the-nhs"><h1>Racist Britain: Migrants made to pay for the NHS</h1></a>
+        <p class="date"><time datetime="2015-03-30">30th March 2015</time></p>
+        <p>What a xenophobic message this sends.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/watch-indias-daughter"><h1>Watch the documentary "India's Daughter" which has been banned in India</h1></a>
+        <p class="date"><time datetime="2015-03-07">7th March 2015</time></p>
+        <p>Links to download and watch 'India's Daughter', which, naturally, some editorial commentary.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/a-seachange-in-front-end-best-practice"><h1>A seachange in front-end best practice - but not for a while</h1></a>
+        <p class="date"><time datetime="2015-03-04">4th March 2015</time></p>
+        <p>With the advent of HTTP/2, many front-end performance best practices will change. But we should only switch over when the browser support is there.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/converting-between-git-and-bzr"><h1>Converting projects between Git and Bazaar</h1></a>
+        <p class="date"><time datetime="2015-01-09">9th January 2015</time></p>
+        <p>In my team, we often work in both git and bzr version control systems. This is a little guide about managing both together.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/project-ideas"><h1>Some of my ideas for projects</h1></a>
+        <p class="date"><time datetime="2015-01-07">7th January 2015</time></p>
+        <p>I often have ideas for digital projects or organisations, and I really see no point keeping them secret, so I'm going to start trying to share them here.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/why-i-consider-advertising-harmful"><h1>Why I consider advertising to be harmful</h1></a>
+        <p class="date"><time datetime="2014-11-03">3rd November 2014</time></p>
+        <p>I state my case for why I think advertising harms society.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/markup-on-the-information-superhighway"><h1>The importance of markup on the information superhighway</h1></a>
+        <p class="date"><time datetime="2014-09-17">17th September 2014</time></p>
+        <p>A fairly informal piece about the importance of understanding markup and the internet.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/supporting-net-neutrality"><h1>Supporting net neutrality and the Internet Slowdown</h1></a>
+        <p class="date"><time datetime="2014-09-09">9th September 2014</time></p>
+        <p>Ubuntu.com and Canonical.com will be showing the #InternetSlowdown banner in support of net neutrality.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/saving-ubuntu-com-download-day"><h1>Saving ubuntu.com on download day: caching location specific pages</h1></a>
+        <p class="date"><time datetime="2014-08-28">28th August 2014</time></p>
+        <p>How we significantly reduced the load on the ubuntu.com servers by caching location-specific download pages.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/using-docker-to-spin-up-light-ubuntu-containers"><h1>Using Docker to spin up light Ubuntu containers</h1></a>
+        <p class="date"><time datetime="2014-08-28">28th August 2014</time></p>
+        <p>Docker is really useful for quickly trying things on different versions of Ubuntu. Here's how.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/host-your-site-with-https-for-free"><h1>Host your site with HTTPS for free</h1></a>
+        <p class="date"><time datetime="2014-08-25">25th August 2014</time></p>
+        <p>How to get completely free HTTPS (SSL or TLS) encrypted website hosting with Redhat Openshift.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/musings-on-the-separation-of-business-domains"><h1>Musings on the separation of business domains</h1></a>
+        <p class="date"><time datetime="2014-07-28">28th July 2014</time></p>
+        <p>A rambling thought piece on the dangers of companies having their fingers in too many pies.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/agile-philosophy"><h1>Agile philosophy: A summary</h1></a>
+        <p class="date"><time datetime="2014-01-09">9th January 2014</time></p>
+        <p>This is a short description of what Agile philosophy is all about, distinct from any Agile methodologies (like Scrum or Kanban). I wrote this in September of 2012.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/php-programming-principles"><h1>PHP best practices</h1></a>
+        <p class="date"><time datetime="2014-01-08">8th January 2014</time></p>
+        <p>A bunch of best practices for PHP which I wrote back in 2012</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/general-coding-guidelines"><h1>Best-practice tips for programmers</h1></a>
+        <p class="date"><time datetime="2014-01-07">7th January 2014</time></p>
+        <p>A bunch of useful tips for programming well (written in 2012)</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/luminous-beings-are-we"><h1>Luminous beings are we</h1></a>
+        <p class="date"><time datetime="2014-01-06">6th January 2014</time></p>
+        <p>A piece of creative writing from my diary from last year. It's about the ebb and flow of humanity, and how life is hacking.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/summary-of-python-code-style-conventions"><h1>A summary of python code style conventions</h1></a>
+        <p class="date"><time datetime="2014-01-04">4th January 2014</time></p>
+        <p>Recently I've been learning Python. I just found out about PEP 8 and PEP 257, which are guidelines for how to write python code. To solidify them in my mind, I'm going to summarise them here.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/python-3-4-virtual-environment"><h1>Using a virtual environment with Python 3.4</h1></a>
+        <p class="date"><time datetime="2013-12-25">25th December 2013</time></p>
+        <p>I recently started learning Python and Django, and so I've been working out how to setup a good virtual environment. Here's how to do it the native way in Python 3.4.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/giffgaff-time-to-untether"><h1>GiffGaff - Time to untether</h1></a>
+        <p class="date"><time datetime="2013-12-24">24th December 2013</time></p>
+        <p>Why it's time to switch away from GiffGaff</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/stories-of-depression"><h1>Stories of depression</h1></a>
+        <p class="date"><time datetime="2013-12-23">23rd December 2013</time></p>
+        <p>I've been thinking about depression lately. Here are a few of my favourite stories about depression.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/gender-separation-in-universities"><h1>Why sex-specific seating in university halls should be allowed</h1></a>
+        <p class="date"><time datetime="2013-12-13">13th December 2013</time></p>
+        <p>I believe that Universities UK were right to advise universities not to disallow events where the audience would be separated by sex, as long as there is no clear prioritisation of one sex over the other.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/i-will-want-to-be-with-my-baby"><h1>I will want to be with my baby</h1></a>
+        <p class="date"><time datetime="2013-11-29">29th November 2013</time></p>
+        <p>When I have children, I will take every opportunity I can to spend time with them. That is why I fully support the new Liberal Democrats flexible parenting policy.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/expressive-coding"><h1>Writing expressive code</h1></a>
+        <p class="date"><time datetime="2013-11-21">21st November 2013</time></p>
+        <p>Reading some legacy code today reminded me of some general principles that programmers could follow to make code easier to manage for future developers. I may have got a bit carried away...</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/how-to-secure-your-site-against-the-nsa"><h1>How to secure your site against the NSA and GCHQ</h1></a>
+        <p class="date"><time datetime="2013-11-07">7th November 2013</time></p>
+        <p>There has been some misinformation going around about the state of our cryptographic technology following certain revelations about the NSA. I'm here to clear that up.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/are-the-us-constitutions-days-numbered"><h1>Are the U.S constitution's days numbered?</h1></a>
+        <p class="date"><time datetime="2013-11-04">4th November 2013</time></p>
+        <p>I was just reading a very interesting article in The Atlantic about the prospect of rewriting the constitution. It made quite a compelling argument.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/bbc-publishing-stupid-opinions"><h1>BBC publishing misinformation on knife crime</h1></a>
+        <p class="date"><time datetime="2013-10-29">29th October 2013</time></p>
+        <p>The BBC reported on a fight and stabbings in Nottingham, but quoted the sensationalist and misleading comments from the club owner. I object.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/linkchecker"><h1>How to use unix linkchecker to thoroughly check any site</h1></a>
+        <p class="date"><time datetime="2013-10-02">2nd October 2013</time></p>
+        <p>I just discovered the unix linkchecker tool. It's a very useful and thorough tool for checking websites that more people should use.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/magic-kingdom-review"><h1>A review of Down and Out in the Magic Kingdom by Cory Doctorow</h1></a>
+        <p class="date"><time datetime="2013-07-18">18th July 2013</time></p>
+        <p>My review of Down and Out: My first review of anything ever, this is my opinion of the Cory's first novel. I hope someone finds it useful.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/how-is-my-blog-going"><h1>How is my blog going? An exploration</h1></a>
+        <p class="date"><time datetime="2013-07-04">4th July 2013</time></p>
+        <p>A little personal wondering about how my blog's going, what I would like it to be, and how to make it so.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/public-analytics-data-for-this-site"><h1>Public analytics data for robinwinslow.co.uk</h1></a>
+        <p class="date"><time datetime="2013-06-28">28th June 2013</time></p>
+        <p>Some up-to-date and public Analytics data from seethestats.com: unique pageviews over time; unique visitors over time; visits by browser; visita by country; visits by operating-system; visits by depth</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/a-rant-about-buffering"><h1>Youtube annoyances - a rant about buffering</h1></a>
+        <p class="date"><time datetime="2013-06-22">22nd June 2013</time></p>
+        <p>A rant about how the most popular online video services get buffering so very wrong by not allowing the user to control it.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/loading-fonts-as-data-urls"><h1>Loading fonts as Data URLs for performance</h1></a>
+        <p class="date"><time datetime="2013-06-19">19th June 2013</time></p>
+        <p>Including your fonts inside your CSS files as Data URLs can help with performance</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/social-morals-a-statement-of-values"><h1>Social morals - a statement of values</h1></a>
+        <p class="date"><time datetime="2013-06-17">17th June 2013</time></p>
+        <p>How me and some friends of mine arrived at a set of moral guidelines, and why it was so inspiring for me</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/static-site-generators"><h1>Blog like a pro with static site generators - it's easier than you think</h1></a>
+        <p class="date"><time datetime="2013-06-14">14th June 2013</time></p>
+        <p>Why technically proficient editors, bloggers, and especially web developers, should all use static site generators for their own sites</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/fixing-missing-disqus-comments-through-url-map"><h1>Fixing missing Disqus comments though the URL map tool</h1></a>
+        <p class="date"><time datetime="2013-06-13">13th June 2013</time></p>
+        <p>I spent a while working out why comments stopped showing up on my blog posts. I eventually discovered the cause and worked out how to fix it through the Disqus URL map tool.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/dont-ever-commit-binary-files-to-git"><h1>Don't ever commit binary files to Git! Or what to do if you do.</h1></a>
+        <p class="date"><time datetime="2013-06-10">10th June 2013</time></p>
+        <p>Why you shouldn't commit binary files to a distributed version control system - and how you can remove them completely if you do.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/create-github-repositories-from-the-command-line"><h1>Using Github's API to create repositories from the command-line</h1></a>
+        <p class="date"><time datetime="2013-06-06">6th June 2013</time></p>
+        <p>Here's a unix command to create a GitHub repository from the command-line. You can even set it to be a git alias, for even more convenience.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/installing-symfony-2-by-creating-a-github-fork"><h1>Installing Symfony 2 by creating a github fork</h1></a>
+        <p class="date"><time datetime="2013-05-30">30th May 2013</time></p>
+        <p>How to fork the Symfony 2 standard PHP project and install dependencies locally using Composer on Ubuntu</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/why-i-love-the-internet"><h1>Why I love the internet</h1></a>
+        <p class="date"><time datetime="2013-05-29">29th May 2013</time></p>
+        <p>A little brain-dump about my passions and how it all adds up to absolutely loving the internet and everything it stands for</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/ease-magento-development-with-bootstrapped-scripts"><h1>Ease Magento development with bootstrapped scripts</h1></a>
+        <p class="date"><time datetime="2013-05-28">28th May 2013</time></p>
+        <p>Mini scripts are super-helpful in magento development. This will explain how to bootstrap them and give a simple example of how to select a category and get its children.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/hes-not-only-in-the-wrong-body-repost"><h1>He's not only in the wrong body... he's in the wrong job (Repost)</h1></a>
+        <p class="date"><time datetime="2013-03-23">23rd March 2013</time></p>
+        <p>This is a full repost of the Daily Mail article by Richard Littlejohn. The Daily Mail have removed the post, but I think it should be available for people to read and judge for themselves.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/how-photodirect-tried-to-steal-10-pounds-from-me"><h1>DSR &amp; how photodirect tried to steal &pound;10</h1></a>
+        <p class="date"><time datetime="2013-03-09">9th March 2013</time></p>
+        <p>The story of how I bought an iPad from photodirect, but when I tried to send it back, they attempted to cheat me of my consumer rights. I also explore the rights consumers have under UK Distance Selling Regulations.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/chrome-v25-breaks-layout-of-date-field"><h1>Chrome v25 breaks layout of date field</h1></a>
+        <p class="date"><time datetime="2013-03-04">4th March 2013</time></p>
+        <p>Chrome ruined my day by introducing a serious breaking change in the update to v25. The HTML5 input date type is likely to display wrong.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/awesome-in-site-user-feedback"><h1>An awesome in-site user feedback tool - with Github integration</h1></a>
+        <p class="date"><time datetime="2013-03-01">1st March 2013</time></p>
+        <p>How I discovered the Uservoice in-site feedback widget, and integrated it with Github Issues using Zapier</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/time-to-say-goodbye-to-ie8"><h1>What you can do if you stop supporting IE8</h1></a>
+        <p class="date"><time datetime="2013-02-27">27th February 2013</time></p>
+        <p>The arguments for dropping support for IE8 in your website</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/talktalk-screwed-me"><h1>TalkTalk screwed me - and the country</h1></a>
+        <p class="date"><time datetime="2013-02-27">27th February 2013</time></p>
+        <p>How TalkTalk absolutely delivered on their promise of shockingly bad customer service</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/optimal-font-size"><h1>Optimal font-size, line-height and line-length</h1></a>
+        <p class="date"><time datetime="2013-02-18">18th February 2013</time></p>
+        <p>An exploration of how to achieve the ultimate optimal font-size and spacing.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/where-do-i-sign-up-for-the-open-access-movement"><h1>Where do I sign up for the Open Access Movement?</h1></a>
+        <p class="date"><time datetime="2013-01-17">17th January 2013</time></p>
+        <p>Learning all about Aaron Swartz after he committed suicide has made me (like many others) want to do more for the Open Access movement. Where do I sign up?</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/oss-projects-i-d-love-to-get-involved-with"><h1>OSS projects I'd love to get involved with...</h1></a>
+        <p class="date"><time datetime="2012-12-12">12th December 2012</time></p>
+        <p>... if I had the time (this list will grow)</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/note-to-self-technical-aspirations"><h1>Note to self - technical aspirations</h1></a>
+        <p class="date"><time datetime="2012-12-11">11th December 2012</time></p>
+        <p>A list of things I'd like to learn and achieve in technology.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/a-blogs-existential-quest"><h1>A blog's existential quest</h1></a>
+        <p class="date"><time datetime="2012-12-07">7th December 2012</time></p>
+        <p>An introduction and exploration of my blog's purpose.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/continuous-improvement-and-tdd-bdd"><h1>Continuous Improvement and TDD/BDD</h1></a>
+        <p class="date"><time datetime="2012-12-06">6th December 2012</time></p>
+        <p>Introduction to Marcello's code workshops at Session Digital, and the principles of BDD and Simple Design.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/an-open-letter-to-avaaz"><h1>An open letter to Avaaz</h1></a>
+        <p class="date"><time datetime="2012-12-03">3rd December 2012</time></p>
+        <p>An email I sent to Avaaz in opposition of the their stance against David Cameron on the press.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/sass-just-became-feasible"><h1>Sass just became feasible</h1></a>
+        <p class="date"><time datetime="2012-11-15">15th November 2012</time></p>
+        <p>Now that Chrome Developer Tools and Firebug support Sass debugging, CSS pre-processors have a viable future.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/what-to-do-if-your-vagrant-vm-crashes"><h1>What to do if your Vagrant VM crashes</h1></a>
+        <p class="date"><time datetime="2012-10-04">4th October 2012</time></p>
+        <p>If your Vagrant machine crashed and when you force kill it, vagrant forgets about its existence - here's how to fix that.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/i-am-a-published-author-of-a-journal-article"><h1>I am a published author (of a journal article)!</h1></a>
+        <p class="date"><time datetime="2012-09-28">28th September 2012</time></p>
+        <p>Download my paper "Micro-generation schemes: user behaviours and attitudes towards energy consumption" (Stedmon, Winslow and Langley) for free.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/finding-a-free-version-of-gill-sans"><h1>Finding a free version of Gill Sans</h1></a>
+        <p class="date"><time datetime="2012-08-05">5th August 2012</time></p>
+        <p>Many sites use Gill Sans. Here are some suggestions of how to use it for free.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/tmux-and-ssh-auto-login-with-ssh-agent-finally"><h1>TMUX and SSH auto-login with ssh-agent (finally!)</h1></a>
+        <p class="date"><time datetime="2012-07-19">19th July 2012</time></p>
+        <p>The steps necessary to get TMUX ssh-agent correctly configured.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/installing-vagrant-on-centos-the-more-reliable-way"><h1>Installing Vagrant on CentOS - the more reliable way</h1></a>
+        <p class="date"><time datetime="2012-07-16">16th July 2012</time></p>
+        <p>Vagrant installation on CentOS is a tad unreliable. Installing with Ruby Gems is the answer.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/in-opposition-of-the-bankers-behind-bars-campaign"><h1>In opposition of the "Bankers behind bars" campaign</h1></a>
+        <p class="date"><time datetime="2012-07-15">15th July 2012</time></p>
+        <p>An email I sent to Avaaz to express my opposition to one of their campaigns.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/sending-emails-individually-to-many-people-in-php"><h1>Sending emails individually to many people in PHP</h1></a>
+        <p class="date"><time datetime="2012-04-09">9th April 2012</time></p>
+        <p>Introducing an open-source mailer script written in PHP and hosted on Github.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/learning-to-scale-svg-icons"><h1>Learning to scale SVG icons</h1></a>
+        <p class="date"><time datetime="2012-04-09">9th April 2012</time></p>
+        <p>Some examples of how to mitigate issues with managing SVG icons in mark-up.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/blog-ideas"><h1>Blog ideas</h1></a>
+        <p class="date"><time datetime="2012-03-13">13th March 2012</time></p>
+        <p>A dynamic post containing all my ideas for blogs to write some-day.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/website-front-end-performance-tips"><h1>Website front-end performance tips</h1></a>
+        <p class="date"><time datetime="2012-03-12">12th March 2012</time></p>
+        
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/usable-layout-responsive-design"><h1>Usable layout (responsive design)</h1></a>
+        <p class="date"><time datetime="2012-03-12">12th March 2012</time></p>
+        <p>Some examples of responsive layouts</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/javascript-closures-passing-an-object-context-to-a-callback-function"><h1>JavaScript closures &#58; Passing an Object context to a callback function</h1></a>
+        <p class="date"><time datetime="2012-03-12">12th March 2012</time></p>
+        <p>A useful application for JavaScript Closures - passing object context.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/importing-a-csv-file-into-mysql"><h1>Importing a CSV file into MySQL</h1></a>
+        <p class="date"><time datetime="2012-03-12">12th March 2012</time></p>
+        <p>A simple PHP command-line script for importing data from a CSV file into a MySQL database.</p>
+      </article>
+    </li>
+  
+    <li>
+      <article>
+        <a href="/css-best-practice-tips"><h1>CSS best practice tips</h1></a>
+        <p class="date"><time datetime="2012-03-12">12th March 2012</time></p>
+        <p>Some (slightly contentious) general rules for writing good CSS.</p>
+      </article>
+    </li>
+  
+</ol>
+
+
+  <footer class="see-the-code">
+    <a href="https://github.com/nottrobin/robinwinslow.uk">☵ See the code</a>
+  </footer>
+
+  <!-- Instant.page -->
+  <script>
+    let mouseoverTimer; let lastTouchTimestamp; const prefetches = new Set; const prefetchElement = document.createElement("link"); const isSupported = prefetchElement.relList && prefetchElement.relList.supports && prefetchElement.relList.supports("prefetch") && window.IntersectionObserver && "isIntersecting" in IntersectionObserverEntry.prototype; const allowQueryString = "instantAllowQueryString" in document.body.dataset; const allowExternalLinks = "instantAllowExternalLinks" in document.body.dataset; const useWhitelist = "instantWhitelist" in document.body.dataset; const mousedownShortcut = "instantMousedownShortcut" in document.body.dataset; const DELAY_TO_NOT_BE_CONSIDERED_A_TOUCH_INITIATED_ACTION = 1111; let delayOnHover = 65; let useMousedown = false; let useMousedownOnly = false; let useViewport = false; if ("instantIntensity" in document.body.dataset) { const intensity = document.body.dataset.instantIntensity; if (intensity.substr(0, "mousedown".length) == "mousedown") { useMousedown = true; if (intensity == "mousedown-only") { useMousedownOnly = true } } else if (intensity.substr(0, "viewport".length) == "viewport") { if (!(navigator.connection && (navigator.connection.saveData || navigator.connection.effectiveType && navigator.connection.effectiveType.includes("2g")))) { if (intensity == "viewport") { if (document.documentElement.clientWidth * document.documentElement.clientHeight < 45e4) { useViewport = true } } else if (intensity == "viewport-all") { useViewport = true } } } else { const milliseconds = parseInt(intensity); if (!isNaN(milliseconds)) { delayOnHover = milliseconds } } } if (isSupported) { const eventListenersOptions = { capture: true, passive: true }; if (!useMousedownOnly) { document.addEventListener("touchstart", touchstartListener, eventListenersOptions) } if (!useMousedown) { document.addEventListener("mouseover", mouseoverListener, eventListenersOptions) } else if (!mousedownShortcut) { document.addEventListener("mousedown", mousedownListener, eventListenersOptions) } if (mousedownShortcut) { document.addEventListener("mousedown", mousedownShortcutListener, eventListenersOptions) } if (useViewport) { let triggeringFunction; if (window.requestIdleCallback) { triggeringFunction = (callback => { requestIdleCallback(callback, { timeout: 1500 }) }) } else { triggeringFunction = (callback => { callback() }) } triggeringFunction(() => { const intersectionObserver = new IntersectionObserver(entries => { entries.forEach(entry => { if (entry.isIntersecting) { const linkElement = entry.target; intersectionObserver.unobserve(linkElement); preload(linkElement.href) } }) }); document.querySelectorAll("a").forEach(linkElement => { if (isPreloadable(linkElement)) { intersectionObserver.observe(linkElement) } }) }) } } function touchstartListener(event) { lastTouchTimestamp = performance.now(); const linkElement = event.target.closest("a"); if (!isPreloadable(linkElement)) { return } preload(linkElement.href) } function mouseoverListener(event) { if (performance.now() - lastTouchTimestamp < DELAY_TO_NOT_BE_CONSIDERED_A_TOUCH_INITIATED_ACTION) { return } const linkElement = event.target.closest("a"); if (!isPreloadable(linkElement)) { return } linkElement.addEventListener("mouseout", mouseoutListener, { passive: true }); mouseoverTimer = setTimeout(() => { preload(linkElement.href); mouseoverTimer = undefined }, delayOnHover) } function mousedownListener(event) { const linkElement = event.target.closest("a"); if (!isPreloadable(linkElement)) { return } preload(linkElement.href) } function mouseoutListener(event) { if (event.relatedTarget && event.target.closest("a") == event.relatedTarget.closest("a")) { return } if (mouseoverTimer) { clearTimeout(mouseoverTimer); mouseoverTimer = undefined } } function mousedownShortcutListener(event) { if (performance.now() - lastTouchTimestamp < DELAY_TO_NOT_BE_CONSIDERED_A_TOUCH_INITIATED_ACTION) { return } const linkElement = event.target.closest("a"); if (event.which > 1 || event.metaKey || event.ctrlKey) { return } if (!linkElement) { return } linkElement.addEventListener("click", function (event) { if (event.detail == 1337) { return } event.preventDefault() }, { capture: true, passive: false, once: true }); const customEvent = new MouseEvent("click", { view: window, bubbles: true, cancelable: false, detail: 1337 }); linkElement.dispatchEvent(customEvent) } function isPreloadable(linkElement) { if (!linkElement || !linkElement.href) { return } if (useWhitelist && !("instant" in linkElement.dataset)) { return } if (!allowExternalLinks && linkElement.origin != location.origin && !("instant" in linkElement.dataset)) { return } if (!["http:", "https:"].includes(linkElement.protocol)) { return } if (linkElement.protocol == "http:" && location.protocol == "https:") { return } if (!allowQueryString && linkElement.search && !("instant" in linkElement.dataset)) { return } if (linkElement.hash && linkElement.pathname + linkElement.search == location.pathname + location.search) { return } if ("noInstant" in linkElement.dataset) { return } return true } function preload(url) { if (prefetches.has(url)) { return } const prefetcher = document.createElement("link"); prefetcher.rel = "prefetch"; prefetcher.href = url; document.head.appendChild(prefetcher); prefetches.add(url) }
+  </script>
+</body>
+
+</html>

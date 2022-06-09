@@ -1,0 +1,864 @@
+<!doctype html>
+
+<!--
+## Features:
+
+- Keep CSS inline: It will be small enough not to add much weight to the page, which means it's better to avoid the extra HTTP call to request CSS
+- Use system fonts: But it's hard to find a nice system font for both Linux, Windows and MacOS
+
+- Google colours for links
+- Visual box around article to highlight it
+- Navigation - don't get in the way
+- 
+
+JavaScript:
+
+- Only use enhancements that aren't necessary:
+  - Document outline on the left
+  - Add "title" to links
+
+-->
+
+<html lang="en">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>TMUX and SSH auto-login with ssh-agent (finally!)</title>
+
+  <meta name="description" content="The steps necessary to get TMUX ssh-agent correctly configured.">
+
+  <!-- Social media -->
+  <meta property='article:author' content='https://twitter.com/nottrobin' />
+  <meta property='article:publisher' content='https://robinwinslow.uk' />
+  <meta property="og:image" content="https://www.thebluediamondgallery.com/tablet/images/blog.jpg" />
+  <meta property="og:url" content="https://robinwinslow.uk/tmux-and-ssh-auto-login-with-ssh-agent-finally" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="TMUX and SSH auto-login with ssh-agent (finally!)" />
+  <!-- Keep Terry Pratchett alive in the network https://xclacksoverhead.org/home/about -->
+  <meta http-equiv="x-clacks-overhead" content="GNU Terry Pratchett" />
+
+  <link type="application/atom+xml" rel="alternative" href="/rss.xml" />
+
+  <style>
+    /**
+       * Font size
+       * 
+       * For usability, bigger text is almost always better. People continue to Especially as resolutions get higher
+       * 
+       */
+
+    body {
+      font-family: "dejavu Sans light", sans-serif;
+      font-size: 1.5rem;
+      background-color: #efefef;
+      margin: 0;
+    }
+
+    time,
+    .subtitle {
+      color: #767676;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-weight: normal;
+      margin-top: 2em;
+      margin-bottom: 1em;
+    }
+
+    h1 {
+      font-size: 2em;
+    }
+
+    h2 {
+      font-size: 1.5em;
+    }
+
+    h3 {
+      font-size: 1.2em;
+    }
+
+    h4 {
+      font-size: 1.1em;
+    }
+
+    p {
+      line-height: 1.5em;
+    }
+
+    a {
+      color: #1a0dab;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    a:visited {
+      color: #551A8B;
+    }
+
+    input,
+    button {
+      appearance: none;
+      border: 1px solid lightgray;
+      font-size: 1em;
+      max-width: 100%;
+      padding: 0.5em 0.8em;
+    }
+
+    article {
+      margin: auto;
+      padding: 3em 5em;
+      max-width: 35em;
+      background-color: white;
+    }
+
+    @media (max-width: 1080px) {
+      article {
+        padding: 0.5em 1.5em;
+      }
+    }
+
+    article p,
+    article ul,
+    article ol {
+      margin-block-start: 1.5em;
+      margin-block-end: 1.5em;
+    }
+
+    article li {
+      margin-block-start: 1em;
+      margin-block-end: 1em;
+      line-height: 1.5em;
+    }
+
+    blockquote {
+      padding: 1em 1.5em;
+      margin: 1.5em 0;
+      border-left: 2px solid #ddd;
+      font-style: italic;
+    }
+
+    blockquote p {
+      display: inline;
+    }
+
+    pre {
+      overflow-x: auto;
+      background-color: #eee;
+      padding: 1em;
+      line-height: 125%;
+    }
+
+    img {
+      max-width: 100%;
+    }
+
+    code {
+      padding: 0.125em 0.25em;
+      line-height: 1.6em;
+      margin: 0;
+      font-size: 0.8em;
+      background-color: #f0f0f0;
+      border-radius: 6px;
+    }
+
+    pre code {
+      line-height: inherit;
+      padding: 0;
+    }
+
+    hr {
+      margin: 3em 0;
+    }
+
+    /* Classes */
+    .article-header {
+      margin: auto;
+      max-width: 60em;
+      padding: 3em 1em;
+      text-align: center;
+    }
+
+    .article-header h1 {
+      font-size: 3em;
+      margin: 0 0 0.5em 0;
+    }
+
+    @media (max-width: 1080px) {
+      .article-header h1 {
+        font-size: 2.3em;
+      }
+    }
+
+    .back-to-home {
+      padding: 0 1.5em;
+    }
+
+    .title {
+      text-align: center;
+      margin: 1em 1em 2em 1em;
+    }
+
+    .title h1 {
+      margin-bottom: 0;
+    }
+
+    .title p {
+      margin-top: 0.25em;
+    }
+
+    .search-form {
+      text-align: center;
+      margin: 0.8em 1em;
+    }
+
+    .search-form input,
+    .search-form button {
+      margin: 0.2em 0;
+    }
+
+    .posts li {
+      margin: 3em 0;
+    }
+
+    .posts li article {
+      padding: 0.5em 3em;
+    }
+
+    .posts li article .date {
+      margin-top: 0.5em;
+      font-size: 0.8em;
+    }
+
+    @media (max-width: 984px) {
+      .posts li article {
+        padding: 1.5em;
+      }
+    }
+
+    .posts li article h1 {
+      font-size: 1.5em;
+      margin: 1em 0 0 0;
+      font-weight: normal;
+    }
+
+    @media (max-width: 984px) {
+      .posts li article h1 {
+        font-size: 1.3em;
+      }
+    }
+
+    .posts {
+      padding: 0;
+      margin: 0;
+      list-style-type: none;
+    }
+
+    .see-the-code {
+      padding: 1.5em;
+      font-size: 0.8em;
+      text-align: right;
+    }
+
+    .discuss {
+      text-align: center;
+      font-style: italic;
+    }
+
+    .author {
+      text-align: center;
+      margin: 3em;
+      font-style: normal;
+    }
+
+    .more-posts {
+      padding: 1.5em 3em;
+      margin: auto;
+      background-color: white;
+      max-width: 35em;
+    }
+
+    .more-posts h2 {
+      margin-top: 1em;
+    }
+
+    .more-posts time {
+      font-size: 0.8em;
+    }
+
+    .headings {
+      position: absolute;
+      text-align: right;
+      font-size: 0.8em;
+      opacity: 0.5;
+      position: fixed;
+      display: none;
+    }
+
+    .headings ol {
+      margin: 6em 6em 1.5em 1.5em;
+      padding: 0;
+    }
+
+    .headings ol li {
+      list-style-type: none;
+      margin: 1.5em 0 0 0;
+    }
+
+    .headings ol li.h2 {
+      font-size: 0.8em;
+      opacity: 0.8;
+      margin: 0.7em 0 0 0;
+    }
+
+    .heading-link {
+      opacity: 0.4;
+      font-size: 2rem;
+    }
+
+    table {
+      border-spacing: 0;
+      font-size: 0.8em;
+    }
+
+    td {
+      padding: 1em;
+      border-left: 1px dotted #666;
+      border-top: 1px dotted #666;
+    }
+
+    td:last-child {
+      border-right: 1px dotted #666;
+    }
+
+    tr:last-child td {
+      border-bottom: 1px dotted #666;
+    }
+
+    /* Pygments syntax highlighting autumn theme */
+    td.linenos pre {
+      color: #000000;
+      background-color: #f0f0f0;
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+
+    span.linenos {
+      color: #000000;
+      background-color: #f0f0f0;
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+
+    td.linenos pre.special {
+      color: #000000;
+      background-color: #ffffc0;
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+
+    span.linenos.special {
+      color: #000000;
+      background-color: #ffffc0;
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+
+    .highlight .hll {
+      background-color: #ffffcc
+    }
+
+    .highlight {
+      background: #f0f0f0;
+    }
+
+    .highlight .c {
+      color: #60a0b0;
+      font-style: italic
+    }
+
+    .highlight .err {
+      border: 1px solid #FF0000
+    }
+
+    .highlight .k {
+      color: #007020;
+      font-weight: bold
+    }
+
+    .highlight .o {
+      color: #666666
+    }
+
+    .highlight .ch {
+      color: #60a0b0;
+      font-style: italic
+    }
+
+    .highlight .cm {
+      color: #60a0b0;
+      font-style: italic
+    }
+
+    .highlight .cp {
+      color: #007020
+    }
+
+    .highlight .cpf {
+      color: #60a0b0;
+      font-style: italic
+    }
+
+    .highlight .c1 {
+      color: #60a0b0;
+      font-style: italic
+    }
+
+    .highlight .cs {
+      color: #60a0b0;
+      background-color: #fff0f0
+    }
+
+    .highlight .gd {
+      color: #A00000
+    }
+
+    .highlight .ge {
+      font-style: italic
+    }
+
+    .highlight .gr {
+      color: #FF0000
+    }
+
+    .highlight .gh {
+      color: #000080;
+      font-weight: bold
+    }
+
+    .highlight .gi {
+      color: #00A000
+    }
+
+    .highlight .go {
+      color: #888888
+    }
+
+    .highlight .gp {
+      color: #c65d09;
+      font-weight: bold
+    }
+
+    .highlight .gs {
+      font-weight: bold
+    }
+
+    .highlight .gu {
+      color: #800080;
+      font-weight: bold
+    }
+
+    .highlight .gt {
+      color: #0044DD
+    }
+
+    .highlight .kc {
+      color: #007020;
+      font-weight: bold
+    }
+
+    .highlight .kd {
+      color: #007020;
+      font-weight: bold
+    }
+
+    .highlight .kn {
+      color: #007020;
+      font-weight: bold
+    }
+
+    .highlight .kp {
+      color: #007020
+    }
+
+    .highlight .kr {
+      color: #007020;
+      font-weight: bold
+    }
+
+    .highlight .kt {
+      color: #902000
+    }
+
+    .highlight .m {
+      color: #40a070
+    }
+
+    .highlight .s {
+      color: #4070a0
+    }
+
+    .highlight .na {
+      color: #4070a0
+    }
+
+    .highlight .nb {
+      color: #007020
+    }
+
+    .highlight .nc {
+      color: #0e84b5;
+      font-weight: bold
+    }
+
+    .highlight .no {
+      color: #60add5
+    }
+
+    .highlight .nd {
+      color: #555555;
+      font-weight: bold
+    }
+
+    .highlight .ni {
+      color: #d55537;
+      font-weight: bold
+    }
+
+    .highlight .ne {
+      color: #007020
+    }
+
+    .highlight .nf {
+      color: #06287e
+    }
+
+    .highlight .nl {
+      color: #002070;
+      font-weight: bold
+    }
+
+    .highlight .nn {
+      color: #0e84b5;
+      font-weight: bold
+    }
+
+    .highlight .nt {
+      color: #062873;
+      font-weight: bold
+    }
+
+    .highlight .nv {
+      color: #bb60d5
+    }
+
+    .highlight .ow {
+      color: #007020;
+      font-weight: bold
+    }
+
+    .highlight .w {
+      color: #bbbbbb
+    }
+
+    .highlight .mb {
+      color: #40a070
+    }
+
+    .highlight .mf {
+      color: #40a070
+    }
+
+    .highlight .mh {
+      color: #40a070
+    }
+
+    .highlight .mi {
+      color: #40a070
+    }
+
+    .highlight .mo {
+      color: #40a070
+    }
+
+    .highlight .sa {
+      color: #4070a0
+    }
+
+    .highlight .sb {
+      color: #4070a0
+    }
+
+    .highlight .sc {
+      color: #4070a0
+    }
+
+    .highlight .dl {
+      color: #4070a0
+    }
+
+    .highlight .sd {
+      color: #4070a0;
+      font-style: italic
+    }
+
+    .highlight .s2 {
+      color: #4070a0
+    }
+
+    .highlight .se {
+      color: #4070a0;
+      font-weight: bold
+    }
+
+    .highlight .sh {
+      color: #4070a0
+    }
+
+    .highlight .si {
+      color: #70a0d0;
+      font-style: italic
+    }
+
+    .highlight .sx {
+      color: #c65d09
+    }
+
+    .highlight .sr {
+      color: #235388
+    }
+
+    .highlight .s1 {
+      color: #4070a0
+    }
+
+    .highlight .ss {
+      color: #517918
+    }
+
+    .highlight .bp {
+      color: #007020
+    }
+
+    .highlight .fm {
+      color: #06287e
+    }
+
+    .highlight .vc {
+      color: #bb60d5
+    }
+
+    .highlight .vg {
+      color: #bb60d5
+    }
+
+    .highlight .vi {
+      color: #bb60d5
+    }
+
+    .highlight .vm {
+      color: #bb60d5
+    }
+
+    .highlight .il {
+      color: #40a070
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="back-to-home">
+  <p><a href="/">← Posts</a></h1></p>
+</nav>
+
+<header class="article-header">
+  <h1>TMUX and SSH auto-login with ssh-agent (finally!)</h1>
+  <time datetime="2012-07-19">19th July 2012</time>
+</header>
+
+<nav class="headings">
+  <ol>
+    <li><a href="#top">↑ top</a></li>
+  </ol>
+</nav>
+
+<article>
+  <p>I finally got this working, so I thought I’d blog about it.</p>
+
+<p>Here’s what I wanted to achieve:</p>
+
+<ul>
+  <li>I log in to my unix system via SSH</li>
+  <li><a href="http://tmux.sourceforge.net/">tmux</a>, my terminal multiplexer, starts up automatically</li>
+  <li>I can then SSH between my environments <strong>without</strong> typing in a password every time.</li>
+</ul>
+
+<p>This is harder than you might think, as it requires several things to work together. After reading <a href="http://spin.atomicobject.com/2012/01/28/less-perplexing-terminal-multiplexing-with-tmux/">through</a> loads <a href="http://superuser.com/questions/237822/how-can-i-get-ssh-agent-working-over-ssh-and-in-tmux-on-os-x">of</a> blog <a href="http://www.opsbs.com/2011/04/terminal-multiplexing-with-ssh-agent-my-tmux-setup/">posts</a> I worked out how to do it:</p>
+
+<ul>
+  <li>A password-less private key setup in your .ssh/ directory (e.g. ~/.ssh/id_dsa)</li>
+  <li>The public key added to the authorised_keys for each destination box</li>
+  <li>An ssh-agent environment running to automatically forward your keys for SSH connection.</li>
+  <li>Make sure you don’t spawn a new ssh-agent each time you log in, as you’ll end up with hundreds of orphaned processes.</li>
+</ul>
+
+<p>It was the last step I was struggling with. To setup the first two steps <a href="http://www.thegeekstuff.com/2008/11/3-steps-to-perform-ssh-login-without-password-using-ssh-keygen-ssh-copy-id/">follow the guide here</a>.</p>
+
+<p>However, if you then don’t do the final step, it will always ask for a passphrase for your key whenever you try to SSH:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[rwmorris@dev:~] $ ssh qa
+Enter passphrase for key '/home/rwmorris/.ssh/id_dsa.pub':
+</code></pre></div></div>
+
+<p>For step 3 you need your tmux session to be aware of the ssh-agent environment, which isn’t too hard.</p>
+
+<p>The problem in step for is that, stupidly, ssh-agent processes persist even if you log out of your terminal, and then if you spawn a new one when you log in again you end up with hundreds of orphaned processes and the sysadmins get upset.</p>
+
+<p>The solution to that is to make sure you start you ssh-agent with the “-a” option to specify the socket it should use, and then make sure you store the process ID (PID) somewhere. That way you can re-set the $SSH_AUTH_SOCK and $SSH_AGENT_PID environment variables to the correct values when you login again, and everything will work.</p>
+
+<p>1: Fire up the ssh-agent process before you run your tmux session, making sure you only start a new one if there isn’t an existing one already.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># ~/.bashrc</span>
+
+<span class="k">if</span> <span class="o">[</span> <span class="nt">-z</span> <span class="s2">"</span><span class="nv">$TMUX</span><span class="s2">"</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+    <span class="c"># we're not in a tmux session</span>
+
+    <span class="k">if</span> <span class="o">[</span> <span class="o">!</span> <span class="nt">-z</span> <span class="s2">"</span><span class="nv">$SSH_TTY</span><span class="s2">"</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+        <span class="c"># We logged in via SSH</span>
+
+        <span class="c"># if ssh auth variable is missing</span>
+        <span class="k">if</span> <span class="o">[</span> <span class="nt">-z</span> <span class="s2">"</span><span class="nv">$SSH_AUTH_SOCK</span><span class="s2">"</span> <span class="o">]</span><span class="p">;</span> <span class="k">then
+            </span><span class="nb">export </span><span class="nv">SSH_AUTH_SOCK</span><span class="o">=</span><span class="s2">"</span><span class="nv">$HOME</span><span class="s2">/.ssh/.auth_socket"</span>
+        <span class="k">fi</span>
+
+        <span class="c"># if socket is available create the new auth session</span>
+        <span class="k">if</span> <span class="o">[</span> <span class="o">!</span> <span class="nt">-S</span> <span class="s2">"</span><span class="nv">$SSH_AUTH_SOCK</span><span class="s2">"</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+            <span class="sb">`</span>ssh-agent <span class="nt">-a</span> <span class="nv">$SSH_AUTH_SOCK</span><span class="sb">`</span> &amp;gt<span class="p">;</span> /dev/null 2&amp;gt<span class="p">;</span>&amp;amp<span class="p">;</span>1
+            <span class="nb">echo</span> <span class="nv">$SSH_AGENT_PID</span> &amp;gt<span class="p">;</span> <span class="nv">$HOME</span>/.ssh/.auth_pid
+        <span class="k">fi</span>
+
+        <span class="c"># if agent isn't defined, recreate it from pid file</span>
+        <span class="k">if</span> <span class="o">[</span> <span class="nt">-z</span> <span class="nv">$SSH_AGENT_PID</span> <span class="o">]</span><span class="p">;</span> <span class="k">then
+            </span><span class="nb">export </span><span class="nv">SSH_AGENT_PID</span><span class="o">=</span><span class="sb">`</span><span class="nb">cat</span> <span class="nv">$HOME</span>/.ssh/.auth_pid<span class="sb">`</span>
+        <span class="k">fi</span>
+
+        <span class="c"># Add all default keys to ssh auth</span>
+        ssh-add 2&gt;/dev/null
+
+        <span class="c"># start tmux</span>
+        tmux attach
+    <span class="k">fi
+fi</span>
+</code></pre></div></div>
+
+<p>2: Make sure tmux is configured to pass through appropriate environment variables so it can find the socket for your ssh-agent session:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># ~/.tmux.conf</span>
+<span class="nb">set</span> <span class="nt">-g</span> update-environment <span class="nt">-r</span>
+</code></pre></div></div>
+
+<p>And win. Sorry it’s not more simple. You’d think a lot of this would be the default use-case so it would just work out of the box, but sadly that’s not the way the unix world works.</p>
+
+
+  
+</article>
+
+<script>
+  /**
+   * Document outline
+   */
+
+  // Get elements
+  let article = document.querySelector("article");
+  let headings = document.querySelector(".headings");
+  let list = headings.querySelector("ol");
+
+  // Populate nav
+  article.querySelectorAll("h1, h2").forEach(function (heading) {
+    let item = document.createElement("li");
+    item.classList.add(heading.tagName.toLowerCase());
+    item.innerHTML = `<a href="#${heading.id}">${heading.textContent}</a>`;
+    list.appendChild(item);
+  });
+
+  function toggleHeadings() {
+    // Don't show if there's not space
+    if (article.offsetLeft < 180) {
+      headings.style.display = "none";
+      return;
+    }
+
+    // More compact layout
+    if (article.offsetLeft < 350) {
+      list.style.marginRight = "1.5em";
+    } else {
+      list.style.marginRight = "6em";
+    }
+
+    let articleBounding = article.getBoundingClientRect();
+    let rightOffset = document.body.offsetWidth - articleBounding.left;
+
+    headings.style.display = "block";
+    headings.style.right = rightOffset + "px";
+
+    if (articleBounding.top > 0) {
+      headings.style.top = articleBounding.top + "px";
+    } else {
+      headings.style.top = 0;
+    }
+  }
+
+  window.addEventListener('scroll', toggleHeadings);
+  window.addEventListener('resize', toggleHeadings);
+
+  toggleHeadings();
+</script>
+
+<address class="author">
+  By <a href="https://twitter.com/nottrobin">@nottrobin</a>
+</address>
+
+
+
+
+
+<nav class="more-posts">
+  <h2>More posts</h2>
+  
+  <p>
+    <a href="/blogging-from-my-phone-with-gitjournal">Blogging from my phone with GitJournal</a><br>
+    <time datetime="2022-06-05">5th June 2022</time>
+  </p>
+  
+  
+  <p>
+    <a href="/finding-a-free-version-of-gill-sans">Finding a free version of Gill Sans</a><br>
+    <time datetime="2012-08-05">5th August 2012</time>
+  </p>
+  
+  
+  <p>
+    <a href="/installing-vagrant-on-centos-the-more-reliable-way">Installing Vagrant on CentOS - the more reliable way</a><br>
+    <time datetime="2012-07-16">16th July 2012</time>
+  </p>
+  
+</nav>
+
+
+  <footer class="see-the-code">
+    <a href="https://github.com/nottrobin/robinwinslow.uk">☵ See the code</a>
+  </footer>
+
+  <!-- Instant.page -->
+  <script>
+    let mouseoverTimer; let lastTouchTimestamp; const prefetches = new Set; const prefetchElement = document.createElement("link"); const isSupported = prefetchElement.relList && prefetchElement.relList.supports && prefetchElement.relList.supports("prefetch") && window.IntersectionObserver && "isIntersecting" in IntersectionObserverEntry.prototype; const allowQueryString = "instantAllowQueryString" in document.body.dataset; const allowExternalLinks = "instantAllowExternalLinks" in document.body.dataset; const useWhitelist = "instantWhitelist" in document.body.dataset; const mousedownShortcut = "instantMousedownShortcut" in document.body.dataset; const DELAY_TO_NOT_BE_CONSIDERED_A_TOUCH_INITIATED_ACTION = 1111; let delayOnHover = 65; let useMousedown = false; let useMousedownOnly = false; let useViewport = false; if ("instantIntensity" in document.body.dataset) { const intensity = document.body.dataset.instantIntensity; if (intensity.substr(0, "mousedown".length) == "mousedown") { useMousedown = true; if (intensity == "mousedown-only") { useMousedownOnly = true } } else if (intensity.substr(0, "viewport".length) == "viewport") { if (!(navigator.connection && (navigator.connection.saveData || navigator.connection.effectiveType && navigator.connection.effectiveType.includes("2g")))) { if (intensity == "viewport") { if (document.documentElement.clientWidth * document.documentElement.clientHeight < 45e4) { useViewport = true } } else if (intensity == "viewport-all") { useViewport = true } } } else { const milliseconds = parseInt(intensity); if (!isNaN(milliseconds)) { delayOnHover = milliseconds } } } if (isSupported) { const eventListenersOptions = { capture: true, passive: true }; if (!useMousedownOnly) { document.addEventListener("touchstart", touchstartListener, eventListenersOptions) } if (!useMousedown) { document.addEventListener("mouseover", mouseoverListener, eventListenersOptions) } else if (!mousedownShortcut) { document.addEventListener("mousedown", mousedownListener, eventListenersOptions) } if (mousedownShortcut) { document.addEventListener("mousedown", mousedownShortcutListener, eventListenersOptions) } if (useViewport) { let triggeringFunction; if (window.requestIdleCallback) { triggeringFunction = (callback => { requestIdleCallback(callback, { timeout: 1500 }) }) } else { triggeringFunction = (callback => { callback() }) } triggeringFunction(() => { const intersectionObserver = new IntersectionObserver(entries => { entries.forEach(entry => { if (entry.isIntersecting) { const linkElement = entry.target; intersectionObserver.unobserve(linkElement); preload(linkElement.href) } }) }); document.querySelectorAll("a").forEach(linkElement => { if (isPreloadable(linkElement)) { intersectionObserver.observe(linkElement) } }) }) } } function touchstartListener(event) { lastTouchTimestamp = performance.now(); const linkElement = event.target.closest("a"); if (!isPreloadable(linkElement)) { return } preload(linkElement.href) } function mouseoverListener(event) { if (performance.now() - lastTouchTimestamp < DELAY_TO_NOT_BE_CONSIDERED_A_TOUCH_INITIATED_ACTION) { return } const linkElement = event.target.closest("a"); if (!isPreloadable(linkElement)) { return } linkElement.addEventListener("mouseout", mouseoutListener, { passive: true }); mouseoverTimer = setTimeout(() => { preload(linkElement.href); mouseoverTimer = undefined }, delayOnHover) } function mousedownListener(event) { const linkElement = event.target.closest("a"); if (!isPreloadable(linkElement)) { return } preload(linkElement.href) } function mouseoutListener(event) { if (event.relatedTarget && event.target.closest("a") == event.relatedTarget.closest("a")) { return } if (mouseoverTimer) { clearTimeout(mouseoverTimer); mouseoverTimer = undefined } } function mousedownShortcutListener(event) { if (performance.now() - lastTouchTimestamp < DELAY_TO_NOT_BE_CONSIDERED_A_TOUCH_INITIATED_ACTION) { return } const linkElement = event.target.closest("a"); if (event.which > 1 || event.metaKey || event.ctrlKey) { return } if (!linkElement) { return } linkElement.addEventListener("click", function (event) { if (event.detail == 1337) { return } event.preventDefault() }, { capture: true, passive: false, once: true }); const customEvent = new MouseEvent("click", { view: window, bubbles: true, cancelable: false, detail: 1337 }); linkElement.dispatchEvent(customEvent) } function isPreloadable(linkElement) { if (!linkElement || !linkElement.href) { return } if (useWhitelist && !("instant" in linkElement.dataset)) { return } if (!allowExternalLinks && linkElement.origin != location.origin && !("instant" in linkElement.dataset)) { return } if (!["http:", "https:"].includes(linkElement.protocol)) { return } if (linkElement.protocol == "http:" && location.protocol == "https:") { return } if (!allowQueryString && linkElement.search && !("instant" in linkElement.dataset)) { return } if (linkElement.hash && linkElement.pathname + linkElement.search == location.pathname + location.search) { return } if ("noInstant" in linkElement.dataset) { return } return true } function preload(url) { if (prefetches.has(url)) { return } const prefetcher = document.createElement("link"); prefetcher.rel = "prefetch"; prefetcher.href = url; document.head.appendChild(prefetcher); prefetches.add(url) }
+  </script>
+</body>
+
+</html>

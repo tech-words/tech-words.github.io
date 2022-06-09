@@ -1,0 +1,847 @@
+<!doctype html>
+
+<!--
+## Features:
+
+- Keep CSS inline: It will be small enough not to add much weight to the page, which means it's better to avoid the extra HTTP call to request CSS
+- Use system fonts: But it's hard to find a nice system font for both Linux, Windows and MacOS
+
+- Google colours for links
+- Visual box around article to highlight it
+- Navigation - don't get in the way
+- 
+
+JavaScript:
+
+- Only use enhancements that aren't necessary:
+  - Document outline on the left
+  - Add "title" to links
+
+-->
+
+<html lang="en">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>A review of Down and Out in the Magic Kingdom by Cory Doctorow</title>
+
+  <meta name="description" content="My review of Down and Out: My first review of anything ever, this is my opinion of the Cory's first novel. I hope someone finds it useful.">
+
+  <!-- Social media -->
+  <meta property='article:author' content='https://twitter.com/nottrobin' />
+  <meta property='article:publisher' content='https://robinwinslow.uk' />
+  <meta property="og:image" content="https://www.thebluediamondgallery.com/tablet/images/blog.jpg" />
+  <meta property="og:url" content="https://robinwinslow.uk/magic-kingdom-review" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="A review of Down and Out in the Magic Kingdom by Cory Doctorow" />
+  <!-- Keep Terry Pratchett alive in the network https://xclacksoverhead.org/home/about -->
+  <meta http-equiv="x-clacks-overhead" content="GNU Terry Pratchett" />
+
+  <link type="application/atom+xml" rel="alternative" href="/rss.xml" />
+
+  <style>
+    /**
+       * Font size
+       * 
+       * For usability, bigger text is almost always better. People continue to Especially as resolutions get higher
+       * 
+       */
+
+    body {
+      font-family: "dejavu Sans light", sans-serif;
+      font-size: 1.5rem;
+      background-color: #efefef;
+      margin: 0;
+    }
+
+    time,
+    .subtitle {
+      color: #767676;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-weight: normal;
+      margin-top: 2em;
+      margin-bottom: 1em;
+    }
+
+    h1 {
+      font-size: 2em;
+    }
+
+    h2 {
+      font-size: 1.5em;
+    }
+
+    h3 {
+      font-size: 1.2em;
+    }
+
+    h4 {
+      font-size: 1.1em;
+    }
+
+    p {
+      line-height: 1.5em;
+    }
+
+    a {
+      color: #1a0dab;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    a:visited {
+      color: #551A8B;
+    }
+
+    input,
+    button {
+      appearance: none;
+      border: 1px solid lightgray;
+      font-size: 1em;
+      max-width: 100%;
+      padding: 0.5em 0.8em;
+    }
+
+    article {
+      margin: auto;
+      padding: 3em 5em;
+      max-width: 35em;
+      background-color: white;
+    }
+
+    @media (max-width: 1080px) {
+      article {
+        padding: 0.5em 1.5em;
+      }
+    }
+
+    article p,
+    article ul,
+    article ol {
+      margin-block-start: 1.5em;
+      margin-block-end: 1.5em;
+    }
+
+    article li {
+      margin-block-start: 1em;
+      margin-block-end: 1em;
+      line-height: 1.5em;
+    }
+
+    blockquote {
+      padding: 1em 1.5em;
+      margin: 1.5em 0;
+      border-left: 2px solid #ddd;
+      font-style: italic;
+    }
+
+    blockquote p {
+      display: inline;
+    }
+
+    pre {
+      overflow-x: auto;
+      background-color: #eee;
+      padding: 1em;
+      line-height: 125%;
+    }
+
+    img {
+      max-width: 100%;
+    }
+
+    code {
+      padding: 0.125em 0.25em;
+      line-height: 1.6em;
+      margin: 0;
+      font-size: 0.8em;
+      background-color: #f0f0f0;
+      border-radius: 6px;
+    }
+
+    pre code {
+      line-height: inherit;
+      padding: 0;
+    }
+
+    hr {
+      margin: 3em 0;
+    }
+
+    /* Classes */
+    .article-header {
+      margin: auto;
+      max-width: 60em;
+      padding: 3em 1em;
+      text-align: center;
+    }
+
+    .article-header h1 {
+      font-size: 3em;
+      margin: 0 0 0.5em 0;
+    }
+
+    @media (max-width: 1080px) {
+      .article-header h1 {
+        font-size: 2.3em;
+      }
+    }
+
+    .back-to-home {
+      padding: 0 1.5em;
+    }
+
+    .title {
+      text-align: center;
+      margin: 1em 1em 2em 1em;
+    }
+
+    .title h1 {
+      margin-bottom: 0;
+    }
+
+    .title p {
+      margin-top: 0.25em;
+    }
+
+    .search-form {
+      text-align: center;
+      margin: 0.8em 1em;
+    }
+
+    .search-form input,
+    .search-form button {
+      margin: 0.2em 0;
+    }
+
+    .posts li {
+      margin: 3em 0;
+    }
+
+    .posts li article {
+      padding: 0.5em 3em;
+    }
+
+    .posts li article .date {
+      margin-top: 0.5em;
+      font-size: 0.8em;
+    }
+
+    @media (max-width: 984px) {
+      .posts li article {
+        padding: 1.5em;
+      }
+    }
+
+    .posts li article h1 {
+      font-size: 1.5em;
+      margin: 1em 0 0 0;
+      font-weight: normal;
+    }
+
+    @media (max-width: 984px) {
+      .posts li article h1 {
+        font-size: 1.3em;
+      }
+    }
+
+    .posts {
+      padding: 0;
+      margin: 0;
+      list-style-type: none;
+    }
+
+    .see-the-code {
+      padding: 1.5em;
+      font-size: 0.8em;
+      text-align: right;
+    }
+
+    .discuss {
+      text-align: center;
+      font-style: italic;
+    }
+
+    .author {
+      text-align: center;
+      margin: 3em;
+      font-style: normal;
+    }
+
+    .more-posts {
+      padding: 1.5em 3em;
+      margin: auto;
+      background-color: white;
+      max-width: 35em;
+    }
+
+    .more-posts h2 {
+      margin-top: 1em;
+    }
+
+    .more-posts time {
+      font-size: 0.8em;
+    }
+
+    .headings {
+      position: absolute;
+      text-align: right;
+      font-size: 0.8em;
+      opacity: 0.5;
+      position: fixed;
+      display: none;
+    }
+
+    .headings ol {
+      margin: 6em 6em 1.5em 1.5em;
+      padding: 0;
+    }
+
+    .headings ol li {
+      list-style-type: none;
+      margin: 1.5em 0 0 0;
+    }
+
+    .headings ol li.h2 {
+      font-size: 0.8em;
+      opacity: 0.8;
+      margin: 0.7em 0 0 0;
+    }
+
+    .heading-link {
+      opacity: 0.4;
+      font-size: 2rem;
+    }
+
+    table {
+      border-spacing: 0;
+      font-size: 0.8em;
+    }
+
+    td {
+      padding: 1em;
+      border-left: 1px dotted #666;
+      border-top: 1px dotted #666;
+    }
+
+    td:last-child {
+      border-right: 1px dotted #666;
+    }
+
+    tr:last-child td {
+      border-bottom: 1px dotted #666;
+    }
+
+    /* Pygments syntax highlighting autumn theme */
+    td.linenos pre {
+      color: #000000;
+      background-color: #f0f0f0;
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+
+    span.linenos {
+      color: #000000;
+      background-color: #f0f0f0;
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+
+    td.linenos pre.special {
+      color: #000000;
+      background-color: #ffffc0;
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+
+    span.linenos.special {
+      color: #000000;
+      background-color: #ffffc0;
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+
+    .highlight .hll {
+      background-color: #ffffcc
+    }
+
+    .highlight {
+      background: #f0f0f0;
+    }
+
+    .highlight .c {
+      color: #60a0b0;
+      font-style: italic
+    }
+
+    .highlight .err {
+      border: 1px solid #FF0000
+    }
+
+    .highlight .k {
+      color: #007020;
+      font-weight: bold
+    }
+
+    .highlight .o {
+      color: #666666
+    }
+
+    .highlight .ch {
+      color: #60a0b0;
+      font-style: italic
+    }
+
+    .highlight .cm {
+      color: #60a0b0;
+      font-style: italic
+    }
+
+    .highlight .cp {
+      color: #007020
+    }
+
+    .highlight .cpf {
+      color: #60a0b0;
+      font-style: italic
+    }
+
+    .highlight .c1 {
+      color: #60a0b0;
+      font-style: italic
+    }
+
+    .highlight .cs {
+      color: #60a0b0;
+      background-color: #fff0f0
+    }
+
+    .highlight .gd {
+      color: #A00000
+    }
+
+    .highlight .ge {
+      font-style: italic
+    }
+
+    .highlight .gr {
+      color: #FF0000
+    }
+
+    .highlight .gh {
+      color: #000080;
+      font-weight: bold
+    }
+
+    .highlight .gi {
+      color: #00A000
+    }
+
+    .highlight .go {
+      color: #888888
+    }
+
+    .highlight .gp {
+      color: #c65d09;
+      font-weight: bold
+    }
+
+    .highlight .gs {
+      font-weight: bold
+    }
+
+    .highlight .gu {
+      color: #800080;
+      font-weight: bold
+    }
+
+    .highlight .gt {
+      color: #0044DD
+    }
+
+    .highlight .kc {
+      color: #007020;
+      font-weight: bold
+    }
+
+    .highlight .kd {
+      color: #007020;
+      font-weight: bold
+    }
+
+    .highlight .kn {
+      color: #007020;
+      font-weight: bold
+    }
+
+    .highlight .kp {
+      color: #007020
+    }
+
+    .highlight .kr {
+      color: #007020;
+      font-weight: bold
+    }
+
+    .highlight .kt {
+      color: #902000
+    }
+
+    .highlight .m {
+      color: #40a070
+    }
+
+    .highlight .s {
+      color: #4070a0
+    }
+
+    .highlight .na {
+      color: #4070a0
+    }
+
+    .highlight .nb {
+      color: #007020
+    }
+
+    .highlight .nc {
+      color: #0e84b5;
+      font-weight: bold
+    }
+
+    .highlight .no {
+      color: #60add5
+    }
+
+    .highlight .nd {
+      color: #555555;
+      font-weight: bold
+    }
+
+    .highlight .ni {
+      color: #d55537;
+      font-weight: bold
+    }
+
+    .highlight .ne {
+      color: #007020
+    }
+
+    .highlight .nf {
+      color: #06287e
+    }
+
+    .highlight .nl {
+      color: #002070;
+      font-weight: bold
+    }
+
+    .highlight .nn {
+      color: #0e84b5;
+      font-weight: bold
+    }
+
+    .highlight .nt {
+      color: #062873;
+      font-weight: bold
+    }
+
+    .highlight .nv {
+      color: #bb60d5
+    }
+
+    .highlight .ow {
+      color: #007020;
+      font-weight: bold
+    }
+
+    .highlight .w {
+      color: #bbbbbb
+    }
+
+    .highlight .mb {
+      color: #40a070
+    }
+
+    .highlight .mf {
+      color: #40a070
+    }
+
+    .highlight .mh {
+      color: #40a070
+    }
+
+    .highlight .mi {
+      color: #40a070
+    }
+
+    .highlight .mo {
+      color: #40a070
+    }
+
+    .highlight .sa {
+      color: #4070a0
+    }
+
+    .highlight .sb {
+      color: #4070a0
+    }
+
+    .highlight .sc {
+      color: #4070a0
+    }
+
+    .highlight .dl {
+      color: #4070a0
+    }
+
+    .highlight .sd {
+      color: #4070a0;
+      font-style: italic
+    }
+
+    .highlight .s2 {
+      color: #4070a0
+    }
+
+    .highlight .se {
+      color: #4070a0;
+      font-weight: bold
+    }
+
+    .highlight .sh {
+      color: #4070a0
+    }
+
+    .highlight .si {
+      color: #70a0d0;
+      font-style: italic
+    }
+
+    .highlight .sx {
+      color: #c65d09
+    }
+
+    .highlight .sr {
+      color: #235388
+    }
+
+    .highlight .s1 {
+      color: #4070a0
+    }
+
+    .highlight .ss {
+      color: #517918
+    }
+
+    .highlight .bp {
+      color: #007020
+    }
+
+    .highlight .fm {
+      color: #06287e
+    }
+
+    .highlight .vc {
+      color: #bb60d5
+    }
+
+    .highlight .vg {
+      color: #bb60d5
+    }
+
+    .highlight .vi {
+      color: #bb60d5
+    }
+
+    .highlight .vm {
+      color: #bb60d5
+    }
+
+    .highlight .il {
+      color: #40a070
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="back-to-home">
+  <p><a href="/">← Posts</a></h1></p>
+</nav>
+
+<header class="article-header">
+  <h1>A review of Down and Out in the Magic Kingdom by Cory Doctorow</h1>
+  <time datetime="2013-07-18">18th July 2013</time>
+</header>
+
+<nav class="headings">
+  <ol>
+    <li><a href="#top">↑ top</a></li>
+  </ol>
+</nav>
+
+<article>
+  <p>Rating: <span class="rating">3.5</span></p>
+
+<p>This is my first ever review of anything. I don’t know why I decided to start now, with this book, but I did. So there we go.</p>
+
+<h2 id="cory-doctorow">Cory Doctorow</h2>
+
+<p><a href="http://craphound.com/down/" title="Down and out in the Magic Kingdom new page">Down and Out in the Magic Kingdom</a> was <a href="https://twitter.com/doctorow" title="Cory's twitter profile">Cory Doctorow</a>’s first novel. Written in 2003, it was (<a href="https://en.wikipedia.org/w/index.php?title=Cory_Doctorow&amp;oldid=560885618#Fiction" title="Wikipedia page: Cory's fiction">according to Wikipedia</a>) the first novel to be released under a <a href="https://creativecommons.org/" title="Creative Commons website">creative commons</a> license. Which is very cool.</p>
+
+<p>Aside from having written <a href="http://craphound.com/?cat=5" title="Cory's novels">12 novels</a> to date, Cory is a co-editor of <a href="http://boingboing.net/" title="Boing Boing">Boing Boing</a>, fellow of the <a href="https://www.eff.org/" title="Electronic Freedom Foundation website">Electronic Freedom Foundation</a> and founder of the <a href="http://www.openrightsgroup.org/" title="Open Rights Group website">Open Rights Group</a>.</p>
+
+<p>If you submit the text from many of my blog posts (e.g. “<a href="/2013/07/04/how-is-my-blog-going/" title="My post: How is my blog going">How is my blog going</a>”) to the <a href="http://iwl.me/" title="The 'I Write Like' website">I Write Like website</a>, it’ll tell you that <a href="http://iwl.me/b/31398c21" title="I write like Cory Doctorow">I write like Cory Doctorow</a>.</p>
+
+<h2 id="a-quick-summary">A quick summary</h2>
+
+<blockquote>
+  <p>This <a href="https://en.wikipedia.org/wiki/Future_history" title="Wikipedia: Future History">future history</a> book takes place in the 22nd century, mostly in <a href="https://en.wikipedia.org/wiki/Walt_Disney_World" title="Wikipedia: Walt Disney World">Walt Disney World</a>. Disney World is run by rival <a href="https://en.wikipedia.org/wiki/Adhocracy" title="Wikipedia: Adhocracy">adhocracies</a>, each dedicated to providing the best experience to the park’s visitors and competing for the Whuffie the guests offer.</p>
+</blockquote>
+
+<p><small>(From the book’s <a href="https://en.wikipedia.org/wiki/Down_and_out_in_the_magic_kingdom" title="Wikipedia: Down and Out in the Magic Kingdom">Wikipedia page</a>)</small></p>
+
+<p>The book is set in a future where:</p>
+
+<ul>
+  <li>your brain can be backed up and re-loaded into cloned bodies, effectively meaning you can live forever (losing small amounts of memory between your most recent backup and your death).</li>
+  <li>money has been replaced by “Whuffie”, a live score based on your reputation and esteem with others. Whuffie works like money, in that it’s easier to get stuff if you have a lot of it, and people also judge you based on your Whuffie.</li>
+  <li>everyone has a built-in HUD that displays information in real-time, including information about those they meet.</li>
+</ul>
+
+<p>You can read the <a href="https://en.wikipedia.org/wiki/Down_and_out_in_the_magic_kingdom#Plot_summary" title="Wikipedia: Down and out plot summary">plot summary on Wikipedia</a>.</p>
+
+<h2 id="my-review">My review</h2>
+
+<p>Right from the start it’s clear Cory has put a lot of effort into the technical details of the world. There are believable, technical solutions to death and money, and you can see how this world could easily be a logical future of the world we currently live in. We develop the ability to back-up a brain and re-insert it into a body; we are constantly connected to a highly-optimised version of the internet, which is feeding us relevant information all the time.</p>
+
+<p>I quite like the idea behind “Whuffie” (although the word itself sounds ridiculous):</p>
+
+<blockquote>
+  <p>.. Whuffie recaptured the true essence of money: in the old days if you were broke but respected, you wouldn’t starve; contrariwise, if you were rich and hated, no sum could buy you security and peace. By measuring the thing that money really represented – your personal capital with your friends and neighbors – you more accurately gaged your success.</p>
+</blockquote>
+
+<p>The mechanism by which Whuffie is attributed or how it is spent is never explained - we are just asked to trust that it basically succeeds at equating to the sum of your reputation, and it is what makes you rich. This is Cory’s way of creating a system for a pure <a href="https://en.wikipedia.org/wiki/Meritocracy" title="Wikipedia: Meritocracy">meritocracyy</a>.</p>
+
+<p>Interestingly, however, Cory doesn’t revel in this technically ornate world he’s created. We have to learn about the details incidentally as we go through the story. And despite the myriad differences between this future world and our own, the novel is written with a modern, colloquial and informal voice (Cory’s standard writing voice), making the world and the characters seem very down-to-earth and familiar. Apart from the technical differences, from the feel of the characters and the relationships, the story could be set in the present day. And that is important: it helps us to feel at home in this otherwise very strange world.</p>
+
+<p>This means that the novel is doing two things side-by-side. It is on the face of it a fairly mundane storyline about an un-remarkable member of this future society in the fairly uninspiring (sorry Cory) setting of Disney World. But at the same time this apparent storyline is simply a device for exploring the strengths and weaknesses of this potentially utopian future.</p>
+
+<p>And that is the really interesting part. It explores the inherent problems with immortality, and the approaches that people might have to it in the real-world. It explores how a purer meritocracy might differ from our current capitalist society (spoiler: not much) and the potential weaknesses of that system.</p>
+
+<p>But unfortunately, ultimately a novel needs to follow a storyline. And this is where, in my opinion, it falls down. Jules is not very likeable. In fact, for most of the novel, he’s a bit of a douche-bag. As the story is told from Jules’ perspective, it’s rather important that we can engage with him to engage with the story, and I found it a little too hard to do that.</p>
+
+<p>This all meant that at the end of the book I was left with a slightly unsatisfied feeling; almost a dystopian feeling. But I certainly encountered some interesting ideas along the way.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>Down and Out is the second book by Cory Doctorow that I’ve read. The first was <a href="https://en.wikipedia.org/wiki/Little_Brother_(Cory_Doctorow_novel)" title="Wikipedia: Little Brother">Little Brother</a>. I would definitely recommend Little Brother over Down and Out - it is a longer and more mature work, and it succeeds in being a more engaging read. This is not entirely surprising as Cory was 5 years and 5 novels more experienced when he wrote Little Brother.</p>
+
+<p>Down and Out is nonetheless a very interesting exploration of a possible future and future technology, and will definitely interest fans of the author. And it is a very respectable first novel.</p>
+
+
+
+  
+</article>
+
+<script>
+  /**
+   * Document outline
+   */
+
+  // Get elements
+  let article = document.querySelector("article");
+  let headings = document.querySelector(".headings");
+  let list = headings.querySelector("ol");
+
+  // Populate nav
+  article.querySelectorAll("h1, h2").forEach(function (heading) {
+    let item = document.createElement("li");
+    item.classList.add(heading.tagName.toLowerCase());
+    item.innerHTML = `<a href="#${heading.id}">${heading.textContent}</a>`;
+    list.appendChild(item);
+  });
+
+  function toggleHeadings() {
+    // Don't show if there's not space
+    if (article.offsetLeft < 180) {
+      headings.style.display = "none";
+      return;
+    }
+
+    // More compact layout
+    if (article.offsetLeft < 350) {
+      list.style.marginRight = "1.5em";
+    } else {
+      list.style.marginRight = "6em";
+    }
+
+    let articleBounding = article.getBoundingClientRect();
+    let rightOffset = document.body.offsetWidth - articleBounding.left;
+
+    headings.style.display = "block";
+    headings.style.right = rightOffset + "px";
+
+    if (articleBounding.top > 0) {
+      headings.style.top = articleBounding.top + "px";
+    } else {
+      headings.style.top = 0;
+    }
+  }
+
+  window.addEventListener('scroll', toggleHeadings);
+  window.addEventListener('resize', toggleHeadings);
+
+  toggleHeadings();
+</script>
+
+<address class="author">
+  By <a href="https://twitter.com/nottrobin">@nottrobin</a>
+</address>
+
+
+
+
+
+<nav class="more-posts">
+  <h2>More posts</h2>
+  
+  <p>
+    <a href="/blogging-from-my-phone-with-gitjournal">Blogging from my phone with GitJournal</a><br>
+    <time datetime="2022-06-05">5th June 2022</time>
+  </p>
+  
+  
+  <p>
+    <a href="/linkchecker">How to use unix linkchecker to thoroughly check any site</a><br>
+    <time datetime="2013-10-02">2nd October 2013</time>
+  </p>
+  
+  
+  <p>
+    <a href="/how-is-my-blog-going">How is my blog going? An exploration</a><br>
+    <time datetime="2013-07-04">4th July 2013</time>
+  </p>
+  
+</nav>
+
+
+  <footer class="see-the-code">
+    <a href="https://github.com/nottrobin/robinwinslow.uk">☵ See the code</a>
+  </footer>
+
+  <!-- Instant.page -->
+  <script>
+    let mouseoverTimer; let lastTouchTimestamp; const prefetches = new Set; const prefetchElement = document.createElement("link"); const isSupported = prefetchElement.relList && prefetchElement.relList.supports && prefetchElement.relList.supports("prefetch") && window.IntersectionObserver && "isIntersecting" in IntersectionObserverEntry.prototype; const allowQueryString = "instantAllowQueryString" in document.body.dataset; const allowExternalLinks = "instantAllowExternalLinks" in document.body.dataset; const useWhitelist = "instantWhitelist" in document.body.dataset; const mousedownShortcut = "instantMousedownShortcut" in document.body.dataset; const DELAY_TO_NOT_BE_CONSIDERED_A_TOUCH_INITIATED_ACTION = 1111; let delayOnHover = 65; let useMousedown = false; let useMousedownOnly = false; let useViewport = false; if ("instantIntensity" in document.body.dataset) { const intensity = document.body.dataset.instantIntensity; if (intensity.substr(0, "mousedown".length) == "mousedown") { useMousedown = true; if (intensity == "mousedown-only") { useMousedownOnly = true } } else if (intensity.substr(0, "viewport".length) == "viewport") { if (!(navigator.connection && (navigator.connection.saveData || navigator.connection.effectiveType && navigator.connection.effectiveType.includes("2g")))) { if (intensity == "viewport") { if (document.documentElement.clientWidth * document.documentElement.clientHeight < 45e4) { useViewport = true } } else if (intensity == "viewport-all") { useViewport = true } } } else { const milliseconds = parseInt(intensity); if (!isNaN(milliseconds)) { delayOnHover = milliseconds } } } if (isSupported) { const eventListenersOptions = { capture: true, passive: true }; if (!useMousedownOnly) { document.addEventListener("touchstart", touchstartListener, eventListenersOptions) } if (!useMousedown) { document.addEventListener("mouseover", mouseoverListener, eventListenersOptions) } else if (!mousedownShortcut) { document.addEventListener("mousedown", mousedownListener, eventListenersOptions) } if (mousedownShortcut) { document.addEventListener("mousedown", mousedownShortcutListener, eventListenersOptions) } if (useViewport) { let triggeringFunction; if (window.requestIdleCallback) { triggeringFunction = (callback => { requestIdleCallback(callback, { timeout: 1500 }) }) } else { triggeringFunction = (callback => { callback() }) } triggeringFunction(() => { const intersectionObserver = new IntersectionObserver(entries => { entries.forEach(entry => { if (entry.isIntersecting) { const linkElement = entry.target; intersectionObserver.unobserve(linkElement); preload(linkElement.href) } }) }); document.querySelectorAll("a").forEach(linkElement => { if (isPreloadable(linkElement)) { intersectionObserver.observe(linkElement) } }) }) } } function touchstartListener(event) { lastTouchTimestamp = performance.now(); const linkElement = event.target.closest("a"); if (!isPreloadable(linkElement)) { return } preload(linkElement.href) } function mouseoverListener(event) { if (performance.now() - lastTouchTimestamp < DELAY_TO_NOT_BE_CONSIDERED_A_TOUCH_INITIATED_ACTION) { return } const linkElement = event.target.closest("a"); if (!isPreloadable(linkElement)) { return } linkElement.addEventListener("mouseout", mouseoutListener, { passive: true }); mouseoverTimer = setTimeout(() => { preload(linkElement.href); mouseoverTimer = undefined }, delayOnHover) } function mousedownListener(event) { const linkElement = event.target.closest("a"); if (!isPreloadable(linkElement)) { return } preload(linkElement.href) } function mouseoutListener(event) { if (event.relatedTarget && event.target.closest("a") == event.relatedTarget.closest("a")) { return } if (mouseoverTimer) { clearTimeout(mouseoverTimer); mouseoverTimer = undefined } } function mousedownShortcutListener(event) { if (performance.now() - lastTouchTimestamp < DELAY_TO_NOT_BE_CONSIDERED_A_TOUCH_INITIATED_ACTION) { return } const linkElement = event.target.closest("a"); if (event.which > 1 || event.metaKey || event.ctrlKey) { return } if (!linkElement) { return } linkElement.addEventListener("click", function (event) { if (event.detail == 1337) { return } event.preventDefault() }, { capture: true, passive: false, once: true }); const customEvent = new MouseEvent("click", { view: window, bubbles: true, cancelable: false, detail: 1337 }); linkElement.dispatchEvent(customEvent) } function isPreloadable(linkElement) { if (!linkElement || !linkElement.href) { return } if (useWhitelist && !("instant" in linkElement.dataset)) { return } if (!allowExternalLinks && linkElement.origin != location.origin && !("instant" in linkElement.dataset)) { return } if (!["http:", "https:"].includes(linkElement.protocol)) { return } if (linkElement.protocol == "http:" && location.protocol == "https:") { return } if (!allowQueryString && linkElement.search && !("instant" in linkElement.dataset)) { return } if (linkElement.hash && linkElement.pathname + linkElement.search == location.pathname + location.search) { return } if ("noInstant" in linkElement.dataset) { return } return true } function preload(url) { if (prefetches.has(url)) { return } const prefetcher = document.createElement("link"); prefetcher.rel = "prefetch"; prefetcher.href = url; document.head.appendChild(prefetcher); prefetches.add(url) }
+  </script>
+</body>
+
+</html>

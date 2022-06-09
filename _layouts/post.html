@@ -1,0 +1,127 @@
+---
+layout: wrapper
+---
+
+<nav class="back-to-home">
+  <p><a href="/">← Posts</a></h1></p>
+</nav>
+
+<header class="article-header">
+  <h1>{{ page.title }}</h1>
+  <time datetime="{{ page.date | date: '%F' }}">{{ page.date | date_to_long_string: "ordinal" }}</time>
+</header>
+
+<nav class="headings">
+  <ol>
+    <li><a href="#top">↑ top</a></li>
+  </ol>
+</nav>
+
+<article>
+  {{ content }}
+
+  {% if page.tweet_id or page.hacker_news_id %}
+    <hr>
+
+    <nav class="discuss">
+        Please come and discuss this article
+        {% if page.tweet_id %}
+          <a href="https://twitter.com/nottrobin/status/{{ page.tweet_id }}">on Twitter</a>{% if page.hacker_news_id %} or {% else %}.{% endif %}
+        {% endif %}
+        {% if page.hacker_news_id %}
+          <a href="https://news.ycombinator.com/item?id={{ page.hacker_news_id }}">on hacker news.</a>
+        {% endif %}
+    </nav>
+  {% endif %}
+</article>
+
+<script>
+  /**
+   * Document outline
+   */
+
+  // Get elements
+  let article = document.querySelector("article");
+  let headings = document.querySelector(".headings");
+  let list = headings.querySelector("ol");
+
+  // Populate nav
+  article.querySelectorAll("h1, h2").forEach(function (heading) {
+    let item = document.createElement("li");
+    item.classList.add(heading.tagName.toLowerCase());
+    item.innerHTML = `<a href="#${heading.id}">${heading.textContent}</a>`;
+    list.appendChild(item);
+  });
+
+  function toggleHeadings() {
+    // Don't show if there's not space
+    if (article.offsetLeft < 180) {
+      headings.style.display = "none";
+      return;
+    }
+
+    // More compact layout
+    if (article.offsetLeft < 350) {
+      list.style.marginRight = "1.5em";
+    } else {
+      list.style.marginRight = "6em";
+    }
+
+    let articleBounding = article.getBoundingClientRect();
+    let rightOffset = document.body.offsetWidth - articleBounding.left;
+
+    headings.style.display = "block";
+    headings.style.right = rightOffset + "px";
+
+    if (articleBounding.top > 0) {
+      headings.style.top = articleBounding.top + "px";
+    } else {
+      headings.style.top = 0;
+    }
+  }
+
+  window.addEventListener('scroll', toggleHeadings);
+  window.addEventListener('resize', toggleHeadings);
+
+  toggleHeadings();
+</script>
+
+<address class="author">
+  By <a href="https://twitter.com/nottrobin">@nottrobin</a>
+</address>
+
+{% for article in site.articles %}
+  {% if article.url == page.url %}
+    {% unless forloop.first %}
+      {% assign previous = preceding %}
+    {% endunless %}
+    {% unless forloop.last %}
+      {% assign next = site.articles[forloop.index] %}
+    {% endunless %}
+  {% endif %}
+  {% assign preceding = article %}
+{% endfor %}
+
+{% assign latest = site.articles[-1] %}
+
+<nav class="more-posts">
+  <h2>More posts</h2>
+  {% if latest and latest.url != next.url and latest.url != page.url %}
+  <p>
+    <a href="{{ latest.url }}">{{ latest.title }}</a><br>
+    <time datetime="{{ latest.date | date: '%F' }}">{{ latest.date | date_to_long_string: "ordinal" }}</time>
+  </p>
+  {% endif %}
+  {% if next %}
+  <p>
+    <a href="{{ next.url }}">{{ next.title }}</a><br>
+    <time datetime="{{ next.date | date: '%F' }}">{{ next.date | date_to_long_string: "ordinal" }}</time>
+  </p>
+  {% endif %}
+  {% if previous %}
+  <p>
+    <a href="{{ previous.url }}">{{ previous.title }}</a><br>
+    <time datetime="{{ previous.date | date: '%F' }}">{{ previous.date | date_to_long_string: "ordinal" }}</time>
+  </p>
+  {% endif %}
+</nav>

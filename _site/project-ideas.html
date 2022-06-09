@@ -1,0 +1,872 @@
+<!doctype html>
+
+<!--
+## Features:
+
+- Keep CSS inline: It will be small enough not to add much weight to the page, which means it's better to avoid the extra HTTP call to request CSS
+- Use system fonts: But it's hard to find a nice system font for both Linux, Windows and MacOS
+
+- Google colours for links
+- Visual box around article to highlight it
+- Navigation - don't get in the way
+- 
+
+JavaScript:
+
+- Only use enhancements that aren't necessary:
+  - Document outline on the left
+  - Add "title" to links
+
+-->
+
+<html lang="en">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Some of my ideas for projects</title>
+
+  <meta name="description" content="I often have ideas for digital projects or organisations, and I really see no point keeping them secret, so I'm going to start trying to share them here.">
+
+  <!-- Social media -->
+  <meta property='article:author' content='https://twitter.com/nottrobin' />
+  <meta property='article:publisher' content='https://robinwinslow.uk' />
+  <meta property="og:image" content="https://www.thebluediamondgallery.com/tablet/images/blog.jpg" />
+  <meta property="og:url" content="https://robinwinslow.uk/project-ideas" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Some of my ideas for projects" />
+  <!-- Keep Terry Pratchett alive in the network https://xclacksoverhead.org/home/about -->
+  <meta http-equiv="x-clacks-overhead" content="GNU Terry Pratchett" />
+
+  <link type="application/atom+xml" rel="alternative" href="/rss.xml" />
+
+  <style>
+    /**
+       * Font size
+       * 
+       * For usability, bigger text is almost always better. People continue to Especially as resolutions get higher
+       * 
+       */
+
+    body {
+      font-family: "dejavu Sans light", sans-serif;
+      font-size: 1.5rem;
+      background-color: #efefef;
+      margin: 0;
+    }
+
+    time,
+    .subtitle {
+      color: #767676;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-weight: normal;
+      margin-top: 2em;
+      margin-bottom: 1em;
+    }
+
+    h1 {
+      font-size: 2em;
+    }
+
+    h2 {
+      font-size: 1.5em;
+    }
+
+    h3 {
+      font-size: 1.2em;
+    }
+
+    h4 {
+      font-size: 1.1em;
+    }
+
+    p {
+      line-height: 1.5em;
+    }
+
+    a {
+      color: #1a0dab;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    a:visited {
+      color: #551A8B;
+    }
+
+    input,
+    button {
+      appearance: none;
+      border: 1px solid lightgray;
+      font-size: 1em;
+      max-width: 100%;
+      padding: 0.5em 0.8em;
+    }
+
+    article {
+      margin: auto;
+      padding: 3em 5em;
+      max-width: 35em;
+      background-color: white;
+    }
+
+    @media (max-width: 1080px) {
+      article {
+        padding: 0.5em 1.5em;
+      }
+    }
+
+    article p,
+    article ul,
+    article ol {
+      margin-block-start: 1.5em;
+      margin-block-end: 1.5em;
+    }
+
+    article li {
+      margin-block-start: 1em;
+      margin-block-end: 1em;
+      line-height: 1.5em;
+    }
+
+    blockquote {
+      padding: 1em 1.5em;
+      margin: 1.5em 0;
+      border-left: 2px solid #ddd;
+      font-style: italic;
+    }
+
+    blockquote p {
+      display: inline;
+    }
+
+    pre {
+      overflow-x: auto;
+      background-color: #eee;
+      padding: 1em;
+      line-height: 125%;
+    }
+
+    img {
+      max-width: 100%;
+    }
+
+    code {
+      padding: 0.125em 0.25em;
+      line-height: 1.6em;
+      margin: 0;
+      font-size: 0.8em;
+      background-color: #f0f0f0;
+      border-radius: 6px;
+    }
+
+    pre code {
+      line-height: inherit;
+      padding: 0;
+    }
+
+    hr {
+      margin: 3em 0;
+    }
+
+    /* Classes */
+    .article-header {
+      margin: auto;
+      max-width: 60em;
+      padding: 3em 1em;
+      text-align: center;
+    }
+
+    .article-header h1 {
+      font-size: 3em;
+      margin: 0 0 0.5em 0;
+    }
+
+    @media (max-width: 1080px) {
+      .article-header h1 {
+        font-size: 2.3em;
+      }
+    }
+
+    .back-to-home {
+      padding: 0 1.5em;
+    }
+
+    .title {
+      text-align: center;
+      margin: 1em 1em 2em 1em;
+    }
+
+    .title h1 {
+      margin-bottom: 0;
+    }
+
+    .title p {
+      margin-top: 0.25em;
+    }
+
+    .search-form {
+      text-align: center;
+      margin: 0.8em 1em;
+    }
+
+    .search-form input,
+    .search-form button {
+      margin: 0.2em 0;
+    }
+
+    .posts li {
+      margin: 3em 0;
+    }
+
+    .posts li article {
+      padding: 0.5em 3em;
+    }
+
+    .posts li article .date {
+      margin-top: 0.5em;
+      font-size: 0.8em;
+    }
+
+    @media (max-width: 984px) {
+      .posts li article {
+        padding: 1.5em;
+      }
+    }
+
+    .posts li article h1 {
+      font-size: 1.5em;
+      margin: 1em 0 0 0;
+      font-weight: normal;
+    }
+
+    @media (max-width: 984px) {
+      .posts li article h1 {
+        font-size: 1.3em;
+      }
+    }
+
+    .posts {
+      padding: 0;
+      margin: 0;
+      list-style-type: none;
+    }
+
+    .see-the-code {
+      padding: 1.5em;
+      font-size: 0.8em;
+      text-align: right;
+    }
+
+    .discuss {
+      text-align: center;
+      font-style: italic;
+    }
+
+    .author {
+      text-align: center;
+      margin: 3em;
+      font-style: normal;
+    }
+
+    .more-posts {
+      padding: 1.5em 3em;
+      margin: auto;
+      background-color: white;
+      max-width: 35em;
+    }
+
+    .more-posts h2 {
+      margin-top: 1em;
+    }
+
+    .more-posts time {
+      font-size: 0.8em;
+    }
+
+    .headings {
+      position: absolute;
+      text-align: right;
+      font-size: 0.8em;
+      opacity: 0.5;
+      position: fixed;
+      display: none;
+    }
+
+    .headings ol {
+      margin: 6em 6em 1.5em 1.5em;
+      padding: 0;
+    }
+
+    .headings ol li {
+      list-style-type: none;
+      margin: 1.5em 0 0 0;
+    }
+
+    .headings ol li.h2 {
+      font-size: 0.8em;
+      opacity: 0.8;
+      margin: 0.7em 0 0 0;
+    }
+
+    .heading-link {
+      opacity: 0.4;
+      font-size: 2rem;
+    }
+
+    table {
+      border-spacing: 0;
+      font-size: 0.8em;
+    }
+
+    td {
+      padding: 1em;
+      border-left: 1px dotted #666;
+      border-top: 1px dotted #666;
+    }
+
+    td:last-child {
+      border-right: 1px dotted #666;
+    }
+
+    tr:last-child td {
+      border-bottom: 1px dotted #666;
+    }
+
+    /* Pygments syntax highlighting autumn theme */
+    td.linenos pre {
+      color: #000000;
+      background-color: #f0f0f0;
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+
+    span.linenos {
+      color: #000000;
+      background-color: #f0f0f0;
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+
+    td.linenos pre.special {
+      color: #000000;
+      background-color: #ffffc0;
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+
+    span.linenos.special {
+      color: #000000;
+      background-color: #ffffc0;
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+
+    .highlight .hll {
+      background-color: #ffffcc
+    }
+
+    .highlight {
+      background: #f0f0f0;
+    }
+
+    .highlight .c {
+      color: #60a0b0;
+      font-style: italic
+    }
+
+    .highlight .err {
+      border: 1px solid #FF0000
+    }
+
+    .highlight .k {
+      color: #007020;
+      font-weight: bold
+    }
+
+    .highlight .o {
+      color: #666666
+    }
+
+    .highlight .ch {
+      color: #60a0b0;
+      font-style: italic
+    }
+
+    .highlight .cm {
+      color: #60a0b0;
+      font-style: italic
+    }
+
+    .highlight .cp {
+      color: #007020
+    }
+
+    .highlight .cpf {
+      color: #60a0b0;
+      font-style: italic
+    }
+
+    .highlight .c1 {
+      color: #60a0b0;
+      font-style: italic
+    }
+
+    .highlight .cs {
+      color: #60a0b0;
+      background-color: #fff0f0
+    }
+
+    .highlight .gd {
+      color: #A00000
+    }
+
+    .highlight .ge {
+      font-style: italic
+    }
+
+    .highlight .gr {
+      color: #FF0000
+    }
+
+    .highlight .gh {
+      color: #000080;
+      font-weight: bold
+    }
+
+    .highlight .gi {
+      color: #00A000
+    }
+
+    .highlight .go {
+      color: #888888
+    }
+
+    .highlight .gp {
+      color: #c65d09;
+      font-weight: bold
+    }
+
+    .highlight .gs {
+      font-weight: bold
+    }
+
+    .highlight .gu {
+      color: #800080;
+      font-weight: bold
+    }
+
+    .highlight .gt {
+      color: #0044DD
+    }
+
+    .highlight .kc {
+      color: #007020;
+      font-weight: bold
+    }
+
+    .highlight .kd {
+      color: #007020;
+      font-weight: bold
+    }
+
+    .highlight .kn {
+      color: #007020;
+      font-weight: bold
+    }
+
+    .highlight .kp {
+      color: #007020
+    }
+
+    .highlight .kr {
+      color: #007020;
+      font-weight: bold
+    }
+
+    .highlight .kt {
+      color: #902000
+    }
+
+    .highlight .m {
+      color: #40a070
+    }
+
+    .highlight .s {
+      color: #4070a0
+    }
+
+    .highlight .na {
+      color: #4070a0
+    }
+
+    .highlight .nb {
+      color: #007020
+    }
+
+    .highlight .nc {
+      color: #0e84b5;
+      font-weight: bold
+    }
+
+    .highlight .no {
+      color: #60add5
+    }
+
+    .highlight .nd {
+      color: #555555;
+      font-weight: bold
+    }
+
+    .highlight .ni {
+      color: #d55537;
+      font-weight: bold
+    }
+
+    .highlight .ne {
+      color: #007020
+    }
+
+    .highlight .nf {
+      color: #06287e
+    }
+
+    .highlight .nl {
+      color: #002070;
+      font-weight: bold
+    }
+
+    .highlight .nn {
+      color: #0e84b5;
+      font-weight: bold
+    }
+
+    .highlight .nt {
+      color: #062873;
+      font-weight: bold
+    }
+
+    .highlight .nv {
+      color: #bb60d5
+    }
+
+    .highlight .ow {
+      color: #007020;
+      font-weight: bold
+    }
+
+    .highlight .w {
+      color: #bbbbbb
+    }
+
+    .highlight .mb {
+      color: #40a070
+    }
+
+    .highlight .mf {
+      color: #40a070
+    }
+
+    .highlight .mh {
+      color: #40a070
+    }
+
+    .highlight .mi {
+      color: #40a070
+    }
+
+    .highlight .mo {
+      color: #40a070
+    }
+
+    .highlight .sa {
+      color: #4070a0
+    }
+
+    .highlight .sb {
+      color: #4070a0
+    }
+
+    .highlight .sc {
+      color: #4070a0
+    }
+
+    .highlight .dl {
+      color: #4070a0
+    }
+
+    .highlight .sd {
+      color: #4070a0;
+      font-style: italic
+    }
+
+    .highlight .s2 {
+      color: #4070a0
+    }
+
+    .highlight .se {
+      color: #4070a0;
+      font-weight: bold
+    }
+
+    .highlight .sh {
+      color: #4070a0
+    }
+
+    .highlight .si {
+      color: #70a0d0;
+      font-style: italic
+    }
+
+    .highlight .sx {
+      color: #c65d09
+    }
+
+    .highlight .sr {
+      color: #235388
+    }
+
+    .highlight .s1 {
+      color: #4070a0
+    }
+
+    .highlight .ss {
+      color: #517918
+    }
+
+    .highlight .bp {
+      color: #007020
+    }
+
+    .highlight .fm {
+      color: #06287e
+    }
+
+    .highlight .vc {
+      color: #bb60d5
+    }
+
+    .highlight .vg {
+      color: #bb60d5
+    }
+
+    .highlight .vi {
+      color: #bb60d5
+    }
+
+    .highlight .vm {
+      color: #bb60d5
+    }
+
+    .highlight .il {
+      color: #40a070
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="back-to-home">
+  <p><a href="/">← Posts</a></h1></p>
+</nav>
+
+<header class="article-header">
+  <h1>Some of my ideas for projects</h1>
+  <time datetime="2015-01-07">7th January 2015</time>
+</header>
+
+<nav class="headings">
+  <ol>
+    <li><a href="#top">↑ top</a></li>
+  </ol>
+</nav>
+
+<article>
+  <p>Ideas are cheap.</p>
+
+<p>Lots of people have ideas, but only a few of them are genuinely valuable. I don’t believe in a strong link between intelligence and having good ideas - there’s a lot of luck in there too.</p>
+
+<p>So whenever anyone has an idea, they should share it to get feedback. That way they’ll be able to see if an idea is bad more quickly, and the occasional really good idea won’t be lost.</p>
+
+<p>To this end, I’m going to try to share my stupid little ideas on this page.</p>
+
+<h2 id="project-idea-sharing-website">Project idea sharing website</h2>
+
+<p>Some people protect their ideas jealously, thinking “why would I give away my fortune-making opportunity?”. If they share it, they’ll lose it. But I don’t think either of these assertions are true - sharing an idea does not mean losing it, and even if you had a really good idea, it doesn’t mean you’d make any money from it. And actually I believe most people realise this. I actually think most people don’t share ideas because they’re worried that the idea is stupid.</p>
+
+<p>Maybe if there was a simple way to share ideas, as anonymously as you like, more of these people with little ideas would share them just in case they turned out to be great?</p>
+
+<h3 id="idea-description">Idea description</h3>
+
+<p>A website for sharing ideas openly, and voting and commenting on other ideas. People could retain copyright over their idea if they want, or they could openly post ideas anonymously.</p>
+
+<h3 id="features">Features</h3>
+
+<ul>
+  <li>Registration, or anonymous posting</li>
+  <li>Choose how liberally you want to share your idea (public domain; attribution; percentage of proceeds; keep full ownership)</li>
+  <li>Voting on ideas</li>
+  <li>Tagging</li>
+  <li>Commenting on ideas</li>
+  <li>Integration with KickStarter or other crowd-funding site</li>
+  <li>Other features to encourage collaboration? People signing up to help with an idea?</li>
+  <li>Extend to be a platform for ideas actually in development? (Maybe not…)</li>
+</ul>
+
+<h3 id="implementation">Implementation</h3>
+
+<p>Since up-voting and tagging are fairly central features, it could be based on <a href="https://askbot.com/">AskBot</a> - a <a href="http://stackoverflow.com/">StackOverflow</a> clone.</p>
+
+<h2 id="open-letters-website">Open letters website</h2>
+
+<p>Quite a few people write open letters. Whether they’re to MPs, GPs, organisations or individuals. By creating an open letter these people are clearly hoping that people will read their letter, but beyond sharing it on their social media platform, they don’t have that much reach. I think it would be great to help people have a nice platform for sharing ideas.</p>
+
+<h3 id="idea-description-1">Idea description</h3>
+
+<p>A website for posting open letters really easily, and for finding other peoples’ open letters.</p>
+
+<h3 id="features-1">Features</h3>
+
+<ul>
+  <li>Publish to the website by simply BCCing the site - anonymously or for your account. Email confirmation.</li>
+  <li>When submitting your letter online, option to send Email someone at the same time</li>
+  <li>Anonymous posting</li>
+  <li>Tagging, searching, listing by tag</li>
+</ul>
+
+<h2 id="a-completely-open-company">A completely open company</h2>
+
+<p>So I work at <a href="http://www.canonical.com/">Canonical</a>, which is basically the full-time hobby of <a href="http://www.markshuttleworth.com/">almost-billionaire Mark Shuttleworth</a>. I’ve often thought that if I somehow came into huge wealth, I would like to start a company, to see how radically I could challenge standard corporate practices and still be at least modestly successful.</p>
+
+<p>Organisations and Coorporations can now be significant seats of power within society (after all part of the point of Capitalism is to take that power away from governments). So far, most coorporations don’t exactly have a reputation for being civic-minded or ethical. I organisations should look after their employees as the <em>first</em> concern, and society as their second, that flat hierarchies work better, that companies should be either employee-owned or non-profit (meaning profits are either distributed among employee salaries or paid back into the business rather than going to shareholders).</p>
+
+<p>However, I believe that all organisations will eventually become self-protective (and therefore bad for society at large) without oversight. So above all, I believe that companies should be open and transparent in all their practices, so they remain answerable to society, and that this idea should be pushed as far as possible.</p>
+
+<h3 id="idea-description-2">Idea description</h3>
+
+<p>Create a company or organisation that genuinely pushes the boundaries of how transparent, collaborative and community-sensitive an organisation can be. Open up financial records, salaries and company processes. Have a democratic process for decision-making within the company, and also one for community input. Encourage communication and debate with society at large.</p>
+
+<h3 id="features-2">Features</h3>
+
+<ul>
+  <li>A charter-like set of founding principles which codify the democratic ideas of the organisation</li>
+  <li>Easily accessible open financial records, profits, including tax payments, salaries</li>
+  <li>An enforced flat heirarchy and low maximum pay disparity</li>
+  <li>A culture of openness and collaboration with the community - rather than the company having a public voice, its employees will be encouraged to have public voices. No-one will speak “for the company”, but everyone can speak “as a member of the company”</li>
+  <li>A mechanism for protecting employees from personal attack as a result of the above point (hmm… tricky)</li>
+  <li>Mechanisms for facilitating employee discussion</li>
+  <li>Mechanisms for raising employee and community concerns with the organisation</li>
+  <li>Online system for community members to request data from the organisation</li>
+  <li>Data should only be withheld if there’s a strong moral (rather than profit-based) reason for doing so (an obvious example would be that it exposes personal information)</li>
+</ul>
+
+<h3 id="implementation-1">Implementation</h3>
+
+<p>So this is a tricky one. If I had a billion dollars, I would create this company. But in the absence of that, you really need an idea to collaborate on before you create an organisation.</p>
+
+<p>I could start by creating the charter I mentioned above. I will try to do that in one of my blog posts. Then if this idea gains traction, one or many companies could take all or parts of that charter and run with it. That would be partial implementation, which would still be awesome.</p>
+
+
+  
+</article>
+
+<script>
+  /**
+   * Document outline
+   */
+
+  // Get elements
+  let article = document.querySelector("article");
+  let headings = document.querySelector(".headings");
+  let list = headings.querySelector("ol");
+
+  // Populate nav
+  article.querySelectorAll("h1, h2").forEach(function (heading) {
+    let item = document.createElement("li");
+    item.classList.add(heading.tagName.toLowerCase());
+    item.innerHTML = `<a href="#${heading.id}">${heading.textContent}</a>`;
+    list.appendChild(item);
+  });
+
+  function toggleHeadings() {
+    // Don't show if there's not space
+    if (article.offsetLeft < 180) {
+      headings.style.display = "none";
+      return;
+    }
+
+    // More compact layout
+    if (article.offsetLeft < 350) {
+      list.style.marginRight = "1.5em";
+    } else {
+      list.style.marginRight = "6em";
+    }
+
+    let articleBounding = article.getBoundingClientRect();
+    let rightOffset = document.body.offsetWidth - articleBounding.left;
+
+    headings.style.display = "block";
+    headings.style.right = rightOffset + "px";
+
+    if (articleBounding.top > 0) {
+      headings.style.top = articleBounding.top + "px";
+    } else {
+      headings.style.top = 0;
+    }
+  }
+
+  window.addEventListener('scroll', toggleHeadings);
+  window.addEventListener('resize', toggleHeadings);
+
+  toggleHeadings();
+</script>
+
+<address class="author">
+  By <a href="https://twitter.com/nottrobin">@nottrobin</a>
+</address>
+
+
+
+
+
+<nav class="more-posts">
+  <h2>More posts</h2>
+  
+  <p>
+    <a href="/blogging-from-my-phone-with-gitjournal">Blogging from my phone with GitJournal</a><br>
+    <time datetime="2022-06-05">5th June 2022</time>
+  </p>
+  
+  
+  <p>
+    <a href="/converting-between-git-and-bzr">Converting projects between Git and Bazaar</a><br>
+    <time datetime="2015-01-09">9th January 2015</time>
+  </p>
+  
+  
+  <p>
+    <a href="/why-i-consider-advertising-harmful">Why I consider advertising to be harmful</a><br>
+    <time datetime="2014-11-03">3rd November 2014</time>
+  </p>
+  
+</nav>
+
+
+  <footer class="see-the-code">
+    <a href="https://github.com/nottrobin/robinwinslow.uk">☵ See the code</a>
+  </footer>
+
+  <!-- Instant.page -->
+  <script>
+    let mouseoverTimer; let lastTouchTimestamp; const prefetches = new Set; const prefetchElement = document.createElement("link"); const isSupported = prefetchElement.relList && prefetchElement.relList.supports && prefetchElement.relList.supports("prefetch") && window.IntersectionObserver && "isIntersecting" in IntersectionObserverEntry.prototype; const allowQueryString = "instantAllowQueryString" in document.body.dataset; const allowExternalLinks = "instantAllowExternalLinks" in document.body.dataset; const useWhitelist = "instantWhitelist" in document.body.dataset; const mousedownShortcut = "instantMousedownShortcut" in document.body.dataset; const DELAY_TO_NOT_BE_CONSIDERED_A_TOUCH_INITIATED_ACTION = 1111; let delayOnHover = 65; let useMousedown = false; let useMousedownOnly = false; let useViewport = false; if ("instantIntensity" in document.body.dataset) { const intensity = document.body.dataset.instantIntensity; if (intensity.substr(0, "mousedown".length) == "mousedown") { useMousedown = true; if (intensity == "mousedown-only") { useMousedownOnly = true } } else if (intensity.substr(0, "viewport".length) == "viewport") { if (!(navigator.connection && (navigator.connection.saveData || navigator.connection.effectiveType && navigator.connection.effectiveType.includes("2g")))) { if (intensity == "viewport") { if (document.documentElement.clientWidth * document.documentElement.clientHeight < 45e4) { useViewport = true } } else if (intensity == "viewport-all") { useViewport = true } } } else { const milliseconds = parseInt(intensity); if (!isNaN(milliseconds)) { delayOnHover = milliseconds } } } if (isSupported) { const eventListenersOptions = { capture: true, passive: true }; if (!useMousedownOnly) { document.addEventListener("touchstart", touchstartListener, eventListenersOptions) } if (!useMousedown) { document.addEventListener("mouseover", mouseoverListener, eventListenersOptions) } else if (!mousedownShortcut) { document.addEventListener("mousedown", mousedownListener, eventListenersOptions) } if (mousedownShortcut) { document.addEventListener("mousedown", mousedownShortcutListener, eventListenersOptions) } if (useViewport) { let triggeringFunction; if (window.requestIdleCallback) { triggeringFunction = (callback => { requestIdleCallback(callback, { timeout: 1500 }) }) } else { triggeringFunction = (callback => { callback() }) } triggeringFunction(() => { const intersectionObserver = new IntersectionObserver(entries => { entries.forEach(entry => { if (entry.isIntersecting) { const linkElement = entry.target; intersectionObserver.unobserve(linkElement); preload(linkElement.href) } }) }); document.querySelectorAll("a").forEach(linkElement => { if (isPreloadable(linkElement)) { intersectionObserver.observe(linkElement) } }) }) } } function touchstartListener(event) { lastTouchTimestamp = performance.now(); const linkElement = event.target.closest("a"); if (!isPreloadable(linkElement)) { return } preload(linkElement.href) } function mouseoverListener(event) { if (performance.now() - lastTouchTimestamp < DELAY_TO_NOT_BE_CONSIDERED_A_TOUCH_INITIATED_ACTION) { return } const linkElement = event.target.closest("a"); if (!isPreloadable(linkElement)) { return } linkElement.addEventListener("mouseout", mouseoutListener, { passive: true }); mouseoverTimer = setTimeout(() => { preload(linkElement.href); mouseoverTimer = undefined }, delayOnHover) } function mousedownListener(event) { const linkElement = event.target.closest("a"); if (!isPreloadable(linkElement)) { return } preload(linkElement.href) } function mouseoutListener(event) { if (event.relatedTarget && event.target.closest("a") == event.relatedTarget.closest("a")) { return } if (mouseoverTimer) { clearTimeout(mouseoverTimer); mouseoverTimer = undefined } } function mousedownShortcutListener(event) { if (performance.now() - lastTouchTimestamp < DELAY_TO_NOT_BE_CONSIDERED_A_TOUCH_INITIATED_ACTION) { return } const linkElement = event.target.closest("a"); if (event.which > 1 || event.metaKey || event.ctrlKey) { return } if (!linkElement) { return } linkElement.addEventListener("click", function (event) { if (event.detail == 1337) { return } event.preventDefault() }, { capture: true, passive: false, once: true }); const customEvent = new MouseEvent("click", { view: window, bubbles: true, cancelable: false, detail: 1337 }); linkElement.dispatchEvent(customEvent) } function isPreloadable(linkElement) { if (!linkElement || !linkElement.href) { return } if (useWhitelist && !("instant" in linkElement.dataset)) { return } if (!allowExternalLinks && linkElement.origin != location.origin && !("instant" in linkElement.dataset)) { return } if (!["http:", "https:"].includes(linkElement.protocol)) { return } if (linkElement.protocol == "http:" && location.protocol == "https:") { return } if (!allowQueryString && linkElement.search && !("instant" in linkElement.dataset)) { return } if (linkElement.hash && linkElement.pathname + linkElement.search == location.pathname + location.search) { return } if ("noInstant" in linkElement.dataset) { return } return true } function preload(url) { if (prefetches.has(url)) { return } const prefetcher = document.createElement("link"); prefetcher.rel = "prefetch"; prefetcher.href = url; document.head.appendChild(prefetcher); prefetches.add(url) }
+  </script>
+</body>
+
+</html>

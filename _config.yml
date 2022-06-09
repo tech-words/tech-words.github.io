@@ -1,0 +1,14 @@
+exclude: [LICENSE.md, README.md]
+permalink: pretty
+defaults:
+  -
+    scope:
+      path: "_articles"
+    values:
+      layout: post
+collections:
+  articles:
+    output: true
+    permalink: /:path
+plugins:
+  - jekyll-redirect-from

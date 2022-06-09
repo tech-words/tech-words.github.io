@@ -1,1 +1,39 @@
-Hello World
+---
+layout: wrapper
+title: Thoughts
+description: Thinkings on life, technology and politics.
+redirect_from:
+  - /back-end/
+  - /front-end/
+  - /musings/
+  - /politics/
+  - /postsbytag/
+  - /categories/
+  - /dev/
+---
+
+<header class="title">
+  <h1>Posts</h1>
+  <p>by <a href="https://twitter.com/nottrobin">@nottrobin</a></p>
+</header>
+
+<form class="search-form" action="https://www.google.com/search">
+  <input type="hidden" name="sitesearch" value="robinwinslow.uk">
+  <input id="search-box" type="search" name="q">
+  <label for="search-box">
+    <button type="submit">Search posts</button>
+  </label>
+</form>
+
+<ol class="posts">
+  {% assign artices_newest_first = site.articles | reverse %}
+  {% for article in artices_newest_first %}
+    <li>
+      <article>
+        <a href="{{ article.url }}"><h1>{{ article.title }}</h1></a>
+        <p class="date"><time datetime="{{ article.date | date: '%F' }}">{{ article.date | date_to_long_string: "ordinal" }}</time></p>
+        {% if article.description %}<p>{{ article.description }}</p>{% endif %}
+      </article>
+    </li>
+  {% endfor %}
+</ol>
