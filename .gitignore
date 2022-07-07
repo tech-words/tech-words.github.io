@@ -1,0 +1,11 @@
+.project
+.sass-cache
+_css
+_site
+.asset-cache/
+.bundle/
+vendor/
+/env/
+/env3/
+node_modules/
+.jekyll-cache/
